@@ -1,0 +1,259 @@
+/* ============================================================
+   StaggeredMenu — GSAP animated slide panel
+   Palette: Navy #0F2D52 | Blue #1E4D8C | Gold #D4A017
+   ============================================================ */
+
+/* ── Wrapper ─────────────────────────────────────────────── */
+.staggered-menu-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.staggered-menu-wrapper.fixed-wrapper {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1100;
+  overflow: hidden;
+}
+
+/* ── Pre-layers (stagger animation) ─────────────────────── */
+.sm-prelayers {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(440px, 100vw);
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.sm-prelayer {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* ── Main slide panel ────────────────────────────────────── */
+.staggered-menu-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(440px, 100vw);
+  height: 100%;
+  background: #0F2D52;
+  z-index: 10;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.35);
+}
+
+.sm-panel-inner {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 100px 48px 48px;
+  overflow-y: auto;
+  gap: 0;
+}
+
+/* ── Logo inside panel ───────────────────────────────────── */
+.sm-logo {
+  margin-bottom: 40px;
+}
+
+.sm-logo img {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* ── Navigation list ─────────────────────────────────────── */
+.sm-panel-nav {
+  flex: 1;
+}
+
+.sm-panel-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sm-panel-itemWrap {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.sm-panel-itemWrap:first-child {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sm-panel-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 0;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-size: clamp(1.4rem, 4vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  transition: color 0.2s ease, padding-left 0.2s ease;
+  position: relative;
+}
+
+.sm-panel-item:hover {
+  color: #D4A017;
+  padding-left: 6px;
+}
+
+.sm-panel-itemLabel {
+  flex: 1;
+}
+
+/* Numbered list style */
+.sm-panel-list--numbered .sm-panel-item::before {
+  content: attr(data-index);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #D4A017;
+  opacity: 0.85;
+  min-width: 24px;
+  margin-top: 2px;
+  align-self: flex-start;
+}
+
+/* ── Social links ────────────────────────────────────────── */
+.sm-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  padding-top: 40px;
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sm-socials-link {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: color 0.2s ease;
+}
+
+.sm-socials-link:hover {
+  color: #D4A017;
+}
+
+/* ── Header with toggle button ───────────────────────────── */
+.staggered-menu-header {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 78px;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  z-index: 20;
+  pointer-events: none;
+  gap: 16px;
+}
+
+/* Hide the built-in logo in header (our navbar already shows it) */
+.staggered-menu-header .sm-logo-header {
+  display: none;
+}
+
+/* ── Toggle button ───────────────────────────────────────── */
+.sm-toggle {
+  pointer-events: auto;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+
+.sm-toggle:hover {
+  background: #f0f0f0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.sm-toggle-icon {
+  position: relative;
+  width: 22px;
+  height: 18px;
+}
+
+.sm-bar {
+  position: absolute;
+  left: 0;
+  width: 22px;
+  height: 2.5px;
+  border-radius: 2px;
+  background: var(--btn-color, #0F2D52);
+  transition: transform 0.35s ease, opacity 0.25s ease;
+}
+
+.sm-bar-1 { top: 0; }
+.sm-bar-2 { top: 7.75px; }
+.sm-bar-3 { top: 15.5px; }
+
+/* Hamburger → X when open */
+.sm-toggle.open .sm-bar-1 {
+  transform: translateY(7.75px) rotate(45deg);
+}
+
+.sm-toggle.open .sm-bar-2 {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.sm-toggle.open .sm-bar-3 {
+  transform: translateY(-7.75px) rotate(-45deg);
+}
+
+/* ── Click-away backdrop ─────────────────────────────────── */
+.sm-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: auto;
+  background: transparent;
+  cursor: default;
+}
+
+/* ── Mobile tweaks ───────────────────────────────────────── */
+@media (max-width: 480px) {
+  .staggered-menu-panel,
+  .sm-prelayers {
+    width: 100vw;
+  }
+
+  .sm-panel-inner {
+    padding: 88px 32px 40px;
+  }
+
+  .sm-panel-item {
+    font-size: 1.35rem;
+    padding: 15px 0;
+  }
+}

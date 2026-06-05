@@ -1,12 +1,139 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Link, NavLink, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { GoogleAuthProvider, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
 import { siteData } from './data/siteData';
 import CircularText from './CircularText';
+import StaggeredMenu from './StaggeredMenu';
 import { firebaseAuth, firebaseConfigError } from './firebase';
 
 const featuredProjectIds = ['project-1', 'project-2', 'project-website'];
 const MAX_FEATURED_PROJECTS = 3;
+
+const navSections = [
+  {
+    id: 'about',
+    title: 'About Dnyanavishkar',
+    subtitle: 'Who we are',
+    color: '#1565c0',
+    items: [
+      { label: 'Mission & Vision', href: '/#mission' },
+      { label: 'Our Team', to: '/team' },
+      { label: 'Partners & Advisors', href: '#' },
+    ],
+  },
+  {
+    id: 'startups',
+    title: 'Our Startups',
+    subtitle: 'Current incubatees',
+    color: '#7b3d1e',
+    items: [
+      { label: 'Active Incubatees', to: '/projects' },
+      { label: 'Startup Profiles', to: '/projects' },
+      { label: 'Sector Focus', to: '/projects' },
+    ],
+  },
+  {
+    id: 'programme',
+    title: 'Incubation Programme',
+    subtitle: 'Training, mentoring, POC',
+    color: '#00695c',
+    items: [
+      { label: 'Programme Overview', href: '#' },
+      { label: 'Programme Stages', href: '#' },
+      { label: 'Eligibility & Criteria', href: '#' },
+    ],
+  },
+  {
+    id: 'portfolio',
+    title: 'Portfolio',
+    subtitle: 'Graduated & funded startups',
+    color: '#455a64',
+    items: [
+      { label: 'Graduated Startups', to: '/projects' },
+      { label: 'Funded Companies', to: '/projects' },
+      { label: 'Impact Stories', href: '#' },
+    ],
+  },
+  {
+    id: 'ecosystem',
+    title: 'Ecosystem',
+    subtitle: 'Mentors, investors, industry',
+    color: '#33691e',
+    items: [
+      { label: 'Mentor Network', href: '#' },
+      { label: 'Investor Connect', href: '#' },
+      { label: 'Industry Partners', href: '#' },
+    ],
+  },
+  {
+    id: 'events',
+    title: 'Events',
+    subtitle: 'Pitches, workshops & more',
+    color: '#880e4f',
+    items: [
+      { label: 'Workshops & Seminars', href: '#' },
+      { label: 'Pitch Days', href: '#' },
+      { label: 'Hackathons', href: '#' },
+    ],
+  },
+  {
+    id: 'pitch',
+    title: 'Pitch Portal',
+    subtitle: 'Submit ideas, get funded',
+    color: '#bf360c',
+    items: [
+      { label: 'Submit Your Idea', to: '/apply' },
+      { label: 'Pitch Guidelines', href: '#' },
+      { label: 'Upcoming Pitch Days', href: '#' },
+    ],
+  },
+  {
+    id: 'apply',
+    title: 'Apply / Register',
+    subtitle: 'Get started today',
+    color: '#4527a0',
+    items: [
+      { label: 'Eligibility Check', to: '/apply' },
+      { label: 'Application Form', to: '/apply' },
+      { label: 'Track My Application', to: '/dashboard' },
+    ],
+  },
+];
+
+const heroSlides = [
+  {
+    id: 'ideate',
+    background: 'linear-gradient(135deg, #0d1f3c 0%, #1565c0 65%, #0a2540 100%)',
+    eyebrow: null,
+    isManifesto: true,
+    desc: 'Dnyanvishkar Foundation is a Section-8 non-profit startup incubation centre supported by D Y Patil International University, dedicated to fostering a vibrant culture of innovation, research, and entrepreneurship.',
+    cta: { label: 'Explore Our Ecosystem', href: '#about', isRouterLink: false },
+  },
+  {
+    id: 'mission',
+    background: 'linear-gradient(135deg, #071a0d 0%, #1b5e20 60%, #2e7d32 100%)',
+    eyebrow: 'Our Mission',
+    title: 'Nurturing Ideas into Impact',
+    desc: 'We identify, nurture, and scale innovative ideas through structured guidance, mentorship, resources, and deep industry connections.',
+    cta: { label: 'Our Mission', href: '#mission', isRouterLink: false },
+  },
+  {
+    id: 'incubate',
+    background: 'linear-gradient(135deg, #3d1a00 0%, #bf360c 55%, #e64a19 100%)',
+    eyebrow: 'Apply for Incubation',
+    title: 'Your Startup Begins Here',
+    desc: 'Access mentorship, seed funding, and 10,000+ sq. ft. of innovation space — built to turn your idea into a scalable, impactful venture.',
+    cta: { label: 'Apply Now', href: '/apply', isRouterLink: true },
+  },
+  {
+    id: 'network',
+    background: 'linear-gradient(135deg, #1a0533 0%, #4527a0 55%, #6a1b9a 100%)',
+    eyebrow: 'Our Network',
+    title: 'Connected to IITs, NITs & Industry',
+    desc: 'Collaborate with premier institutions — IIT Bombay, TISS, Pune University and more — who power our innovation ecosystem.',
+    cta: { label: 'Explore Collaborations', href: '#collaborations', isRouterLink: false },
+  },
+];
 
 function smoothScrollTo(targetTop, duration = 850) {
   const startTop = window.scrollY;
@@ -204,7 +331,6 @@ function App() {
 function SiteLayout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
@@ -348,41 +474,6 @@ function SiteLayout({ children }) {
     }
   }, [isHome, location.hash]);
 
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [location.pathname, location.hash]);
-
-  const navItems = useMemo(() => {
-    if (isHome) {
-      return [
-        { label: 'Home', href: '#hero', id: 'hero' },
-        { label: 'About', href: '#about', id: 'about' },
-        { label: 'Our Mission', href: '#mission', id: 'mission' },
-        { label: 'Projects', to: '/projects' },
-        { label: 'Problem Statements', to: '/problem-statements' },
-        { label: 'Our Team', to: '/team' },
-        ...(currentUser
-          ? isAdmin
-            ? [{ label: 'Admin Panel', to: '/admin/ideas' }]
-            : [{ label: 'My Dashboard', to: '/dashboard' }]
-          : [{ label: 'Login', to: '/auth' }])
-      ];
-    }
-    return [
-      { label: 'Home', to: '/' },
-      { label: 'About', to: '/#about' },
-      { label: 'Our Mission', to: '/#mission' },
-      { label: 'Projects', to: '/projects' },
-      { label: 'Problem Statements', to: '/problem-statements' },
-      { label: 'Our Team', to: '/team' },
-      ...(currentUser
-        ? isAdmin
-          ? [{ label: 'Admin Panel', to: '/admin/ideas' }]
-          : [{ label: 'My Dashboard', to: '/dashboard' }]
-        : [{ label: 'Login', to: '/auth' }])
-    ];
-  }, [currentUser, isAdmin, isHome]);
-
   const scrollToSection = (event, id) => {
     event.preventDefault();
 
@@ -422,15 +513,19 @@ function SiteLayout({ children }) {
     setActiveSection(id);
   };
 
+  const staggeredMenuItems = [
+    { label: 'About', ariaLabel: 'About Dnyanavishkar', link: '/#about' },
+    { label: 'Our Startups', ariaLabel: 'Current incubatees', link: '/projects' },
+    { label: 'Incubation', ariaLabel: 'Incubation Programme', link: '#' },
+    { label: 'Portfolio', ariaLabel: 'Portfolio of startups', link: '/projects' },
+    { label: 'Ecosystem', ariaLabel: 'Mentors, investors & industry', link: '#' },
+    { label: 'Events', ariaLabel: 'Events & workshops', link: '#' },
+    { label: 'Pitch Portal', ariaLabel: 'Submit ideas and get funded', link: '/apply' },
+    { label: 'Apply', ariaLabel: 'Apply for incubation', link: '/apply' },
+  ];
+
   return (
     <>
-      {/* Mobile nav overlay */}
-      <div
-        className={`nav-overlay${menuOpen ? ' active' : ''}`}
-        onClick={() => setMenuOpen(false)}
-        aria-hidden="true"
-      />
-
       <nav className="navbar" id="navbar">
         <div className="container">
           <div className="nav-inner">
@@ -451,79 +546,29 @@ function SiteLayout({ children }) {
             >
               <img src={siteData.brand.logo} alt="Dnyanvishkar Logo" className="nav-logo-img" />
             </Link>
-            <ul className={`nav-links${menuOpen ? ' open' : ''}`} id="navLinks">
-              {navItems.map((item) => (
-                <li key={item.label}>
-                  {item.href ? (
-                    <a
-                      href={item.href}
-                      className={`nav-link${activeSection === item.id ? ' active' : ''}`}
-                      onClick={(event) => {
-                        scrollToSection(event, item.id);
-                        setMenuOpen(false);
-                      }}
-                    >
-                      {item.label}
-                    </a>
-                  ) : (
-                    <NavLink
-                      to={item.to}
-                      className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      {item.label}
-                    </NavLink>
-                  )}
-                </li>
-              ))}
-              <li>
-                <button
-                  type="button"
-                  className="nav-link nav-cta nav-cta-button"
-                  onClick={() => {
-                    setMenuOpen(false);
-                    if (!currentUser) {
-                      navigate('/auth', { state: { redirectTo: '/apply' } });
-                      return;
-                    }
-
-                    navigate(isAdmin ? '/admin/ideas' : '/apply');
-                  }}
-                >
-                  Apply for Incubation
-                </button>
-              </li>
-              {currentUser ? (
-                <li>
-                  <button
-                    type="button"
-                    className="nav-link nav-logout-btn"
-                    onClick={async () => {
-                      if (firebaseAuth) {
-                        await signOut(firebaseAuth);
-                      }
-                      setMenuOpen(false);
-                    }}
-                  >
-                    Logout
-                  </button>
-                </li>
-              ) : null}
-            </ul>
             <img src="/media/CIIE_Merged_MASTER_LOGO.webp" alt="CIIE Logo" className="nav-logo-img nav-logo-img-partner" />
-            <button
-              className={`hamburger${menuOpen ? ' open' : ''}`}
-              id="hamburger"
-              aria-label="Toggle navigation"
-              onClick={() => setMenuOpen((prev) => !prev)}
-            >
-              <span className="bar"></span>
-              <span className="bar"></span>
-              <span className="bar"></span>
-            </button>
           </div>
         </div>
       </nav>
+
+      <StaggeredMenu
+        position="right"
+        isFixed={true}
+        items={staggeredMenuItems}
+        socialItems={[
+          { label: 'Twitter', link: '#' },
+          { label: 'LinkedIn', link: '#' },
+          { label: 'Instagram', link: '#' },
+        ]}
+        displaySocials={true}
+        displayItemNumbering={true}
+        colors={['#0F2D52', '#1E4D8C']}
+        accentColor="#D4A017"
+        menuButtonColor="#0F2D52"
+        openMenuButtonColor="#0F2D52"
+        changeMenuColorOnOpen={false}
+        navigate={navigate}
+      />
 
       <div className="nav-marquee" id="navMarquee" aria-label="Dnyanavishkar slogan ticker">
         <div className="nav-marquee-track">
@@ -602,6 +647,14 @@ function SiteLayout({ children }) {
 
 function HomePage() {
   const [projects, setProjects] = useState(siteData.projects);
+  const [heroSlide, setHeroSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setHeroSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const revealTargets = document.querySelectorAll(
@@ -709,31 +762,43 @@ function HomePage() {
   return (
     <>
       <section className="hero-slider" id="hero">
-        <video className="hero-bg-video" autoPlay muted loop playsInline>
-          <source src="/media/bg%20video.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
         <div className="slides-wrapper" id="slidesWrapper">
-          <div className="slide active" data-index="0">
-            <div className="slide-bg" style={{ background: 'none' }}></div>
-            <div className="slide-overlay" style={{ background: 'rgba(10, 37, 64, 0.55)' }}></div>
-            <div className="slide-content">
-              <div className="slide-content-left">
-                <h1 className="slide-title slide-title-manifesto">
-                  <span className="manifesto-word">IDEATE</span>
-                  <span className="manifesto-word">INNOVATE</span>
-                  <span className="manifesto-word">INCUBATE</span>
-                </h1>
-                <p className="slide-desc" style={{ maxWidth: 600 }}>
-                  {siteData.homeHero.description}
-                </p>
-                <a href={siteData.homeHero.ctaTarget} className="slide-btn">
-                  {siteData.homeHero.ctaLabel} <span className="btn-arrow" aria-hidden="true">&rarr;</span>
-                </a>
+          {heroSlides.map((slide, index) => (
+            <div
+              key={slide.id}
+              className={`slide${heroSlide === index ? ' active' : ''}`}
+              data-index={index}
+              style={{ background: slide.background }}
+            >
+              <div className="slide-overlay" style={{ background: 'rgba(0, 0, 0, 0.38)' }}></div>
+              <div className="slide-content">
+                <div className="slide-content-left">
+                  {slide.eyebrow ? <span className="slide-overline">{slide.eyebrow}</span> : null}
+                  {slide.isManifesto ? (
+                    <h1 className="slide-title slide-title-manifesto">
+                      <span className="manifesto-word">IDEATE</span>
+                      <span className="manifesto-word">INNOVATE</span>
+                      <span className="manifesto-word">INCUBATE</span>
+                    </h1>
+                  ) : (
+                    <h1 className="slide-title">{slide.title}</h1>
+                  )}
+                  <p className="slide-desc">{slide.desc}</p>
+                  {slide.cta.isRouterLink ? (
+                    <Link to={slide.cta.href} className="slide-btn">
+                      {slide.cta.label} <span className="btn-arrow" aria-hidden="true">&rarr;</span>
+                    </Link>
+                  ) : (
+                    <a href={slide.cta.href} className="slide-btn">
+                      {slide.cta.label} <span className="btn-arrow" aria-hidden="true">&rarr;</span>
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          ))}
         </div>
+
       </section>
 
       <section className="about" id="about">
