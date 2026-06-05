@@ -808,6 +808,11 @@ function HomePage() {
               <span className="section-eyebrow">{siteData.about.eyebrow}</span>
               <h2 className="section-title-serif">{siteData.about.title}</h2>
               <div className="title-line-accent"></div>
+              <blockquote className="about-pull-quote">
+                <span>Where Ideas Find Purpose.</span>
+                <br />
+                <span>And Purpose Finds Impact.</span>
+              </blockquote>
               <p className="about-lead">{siteData.about.lead}</p>
               <p className="about-tagline">{siteData.about.tagline}</p>
             </div>

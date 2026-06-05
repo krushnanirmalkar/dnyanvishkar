@@ -22,7 +22,7 @@ export const siteData = {
     title: 'Driving Innovation & Entrepreneurship',
     lead:
       'Dnyanvishkar Foundation is a section-8 non-profit startup incubation centre supported by D Y Patil International University, dedicated to fostering a vibrant culture of innovation, research, and entrepreneurship.',
-    tagline: 'IDEATE. INNOVATE. INCUBATE. IMPACT.',
+    tagline: 'IDEATE • INNOVATE • INCUBATE • IMPACT',
     paragraphs: [
       'We empower students, researchers, and aspiring founders by providing the right ecosystem to transform ideas into impactful ventures.',
       'Located opposite D Y Patil International University, Akurdi, Pune, the Foundation offers more than 10,000 square feet of dedicated space designed for collaboration, prototyping, and startup growth.',

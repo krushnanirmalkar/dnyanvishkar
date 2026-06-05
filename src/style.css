@@ -1164,14 +1164,36 @@ button > *,
     line-height: 1.8;
 }
 
-.about-tagline {
+.about-pull-quote {
+    margin: 28px 0 32px;
+    max-width: 70%;
+    padding: 0;
+    border: none;
     font-family: var(--font-serif);
-    font-size: 1rem;
+    font-size: clamp(1.1rem, 2vw, 1.45rem);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--clr-accent);
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.9s ease 0.4s, transform 0.9s ease 0.4s;
+}
+
+.about-left.visible .about-pull-quote {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.about-tagline {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.32em;
     text-transform: uppercase;
     color: var(--clr-accent);
-    margin-top: 10px;
+    margin-top: 28px;
 }
 
 .about-panel {
