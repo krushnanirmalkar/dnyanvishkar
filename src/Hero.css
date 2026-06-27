@@ -5,9 +5,9 @@
 
 .premium-hero.full-viewport-hero {
   position: relative;
-  height: 60vh; /* Slimmer height so content below is visible immediately */
-  min-height: 480px; /* Safeguard minimum height for readability of poster aspect ratios */
   width: 100%;
+  height: auto;
+  aspect-ratio: 1920 / 838; /* Matches the posters' natural aspect ratio */
   padding: 0;
   display: flex;
   align-items: center;
@@ -73,10 +73,23 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: fill; /* Stretch the image to both directions (width and height) to cover space fully */
+  object-fit: cover; /* Preserves the poster's original aspect ratio and covers the space fully */
   border-radius: 0;
   will-change: transform;
   padding: 0;
+  z-index: 2;
+}
+
+.slide-img-blur {
+  position: absolute;
+  inset: -20px; /* Bleed slightly outside to hide blurred edge artifacts */
+  width: calc(100% + 40px);
+  height: calc(100% + 40px);
+  object-fit: cover;
+  filter: blur(24px) brightness(0.45); /* Premium blurred backdrop */
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .slide-glass-overlay {
@@ -98,29 +111,37 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: rgba(10, 25, 47, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(248, 250, 252, 0.8);
+  width: 48px;
+  height: 48px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 10;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   outline: none;
 }
 
 .carousel-nav-btn:hover {
-  background: rgba(21, 101, 192, 0.85); /* Royal Blue */
-  border-color: #ff6f00; /* Orange Accent */
   color: #ffffff;
-  box-shadow: 0 0 20px rgba(255, 111, 0, 0.45);
-  transform: translateY(-50%) scale(1.05);
+  transform: translateY(-50%) scale(1.15);
+}
+
+.carousel-nav-btn svg {
+  width: 32px;
+  height: 32px;
+  transition: transform 0.3s ease;
+}
+
+.btn-prev:hover svg {
+  transform: translateX(-4px);
+}
+
+.btn-next:hover svg {
+  transform: translateX(4px);
 }
 
 .btn-prev {
@@ -206,4 +227,56 @@
 .carousel-dot-indicator.dot-active .dot-progress-bg {
   background: rgba(255, 255, 255, 0.25);
   height: 4px;
+}
+
+/* ==========================================================================
+   SLOGAN MARQUEE SECTION (In-flow, just below Hero)
+   ========================================================================== */
+.hero-marquee {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #1c321b; /* Rich dark evergreen */
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 0; /* Reduced vertical padding */
+  z-index: 9;
+  display: flex;
+  align-items: center;
+}
+
+.hero-marquee-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  white-space: nowrap;
+  animation: heroMarqueeFlow 25s linear infinite;
+}
+
+.hero-marquee-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 40px;
+  padding-right: 40px;
+}
+
+.hero-marquee-item {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.72rem; /* Decreased font size */
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  line-height: 1.2;
+}
+
+@keyframes heroMarqueeFlow {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }

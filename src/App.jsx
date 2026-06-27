@@ -106,7 +106,7 @@ const heroSlides = [
     background: 'linear-gradient(135deg, #0d1f3c 0%, #1565c0 65%, #0a2540 100%)',
     eyebrow: null,
     isManifesto: true,
-    desc: 'Dnyanvishkar Foundation is a Section-8 non-profit startup incubation centre supported by D Y Patil International University, dedicated to fostering a vibrant culture of innovation, research, and entrepreneurship.',
+    desc: 'Dnyanavishkar Foundation is a Section-8 non-profit startup incubation centre supported by D Y Patil International University, dedicated to fostering a vibrant culture of innovation, research, and entrepreneurship.',
     cta: { label: 'Explore Our Ecosystem', href: '#about', isRouterLink: false },
   },
   {
@@ -172,7 +172,7 @@ function SitePreloader({ isExiting }) {
           className="preloader-circular"
         />
         <div className="preloader-logo">
-          <img src="/media/logo.png" alt="Dnyanvishkar Logo" />
+          <img src="/media/logo.png" alt="Dnyanavishkar Logo" />
         </div>
       </div>
     </div>
@@ -536,6 +536,42 @@ function SiteLayout({ children }) {
 
   return (
     <>
+      {/* Side Fixed Social Buttons */}
+      <div id="fixed-social">
+        <div>
+          <a className="fixed-facebook" href="https://www.facebook.com/mhrdInnovation" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/>
+            </svg>
+            <span>Facebook</span>
+          </a>
+        </div>
+        <div>
+          <a className="fixed-twitter" href="https://twitter.com/mhrd_innovation" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+            <span>Twitter</span>
+          </a>
+        </div>
+        <div>
+          <a className="fixed-instagrem" href="https://www.instagram.com/mhrd.innovationcell" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6A3.6 3.6 0 0 0 16.4 4H7.6m12.4 2.25a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10m0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+            </svg>
+            <span>Instagram</span>
+          </a>
+        </div>
+        <div>
+          <a className="fixed-youtube" href="https://www.youtube.com/@MoEInnovationCell" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.06v1.76c0 .57-.03 1.27-.1 2.06-.06.8-.15 1.43-.28 1.9a2.5 2.5 0 0 1-1.76 1.77C18.27 20 15 20 12 20s-6.27 0-7.77-.37a2.5 2.5 0 0 1-1.76-1.77c-.13-.47-.23-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.06v-1.76c0-.57.03-1.27.1-2.06.05-.8.15-1.43.28-1.9a2.5 2.5 0 0 1 1.76-1.77z"/>
+            </svg>
+            <span>Youtube</span>
+          </a>
+        </div>
+      </div>
+
       <nav className="navbar" id="navbar">
         {/* Section 1: Logos (Dnyanvishkar left, CIIE right) */}
         <div className="nav-top-bar">
@@ -556,7 +592,7 @@ function SiteLayout({ children }) {
                   window.scrollTo(0, 0);
                 }}
               >
-                <img src={siteData.brand.logo} alt="Dnyanvishkar Logo" className="nav-logo-img" />
+                <img src={siteData.brand.logo} alt="Dnyanavishkar Logo" className="nav-logo-img" />
               </Link>
               <img src="/media/CIIE_Merged_MASTER_LOGO.webp" alt="CIIE Logo" className="nav-logo-img nav-logo-img-partner" />
             </div>
@@ -823,9 +859,43 @@ function SiteLayout({ children }) {
   );
 }
 
+const VisionIcon = () => (
+  <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+    <circle cx="32" cy="32" r="28" stroke="#00acc1" strokeWidth="1.5" strokeDasharray="3 3" />
+    <circle cx="32" cy="32" r="22" stroke="#ff6f00" strokeWidth="1.5" />
+    {Array.from({ length: 16 }).map((_, i) => {
+      const angle = (i * 360) / 16;
+      const rad = (angle * Math.PI) / 180;
+      const x1 = 32 + 18 * Math.cos(rad);
+      const y1 = 32 + 18 * Math.sin(rad);
+      const x2 = 32 + 22 * Math.cos(rad);
+      const y2 = 32 + 22 * Math.sin(rad);
+      return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#ff6f00" strokeWidth="1.5" />;
+    })}
+    <circle cx="32" cy="32" r="12" fill="#00acc1" fillOpacity="0.1" stroke="#00acc1" strokeWidth="2" />
+    <circle cx="32" cy="32" r="5" fill="#ff6f00" />
+    <path d="M12 32C18 20 46 20 52 32C46 44 18 44 12 32Z" stroke="#ff6f00" strokeWidth="1.5" />
+  </svg>
+);
+
+const MissionIcon = () => (
+  <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+    <circle cx="32" cy="32" r="28" stroke="#00acc1" strokeWidth="1.5" strokeDasharray="3 3" />
+    <circle cx="32" cy="32" r="22" stroke="#00acc1" strokeWidth="2" />
+    <circle cx="32" cy="32" r="16" stroke="#ff6f00" strokeWidth="2" />
+    <circle cx="32" cy="32" r="10" stroke="#00acc1" strokeWidth="2" />
+    <circle cx="32" cy="32" r="4" fill="#ff6f00" />
+    <line x1="32" y1="4" x2="32" y2="60" stroke="#00acc1" strokeWidth="1" strokeDasharray="2 2" />
+    <line x1="4" y1="32" x2="60" y2="32" stroke="#00acc1" strokeWidth="1" strokeDasharray="2 2" />
+    <path d="M32 6 A26 26 0 0 1 58 32" stroke="#ff6f00" strokeWidth="2" />
+    <path d="M32 58 A26 26 0 0 1 6 32" stroke="#00acc1" strokeWidth="2" />
+  </svg>
+);
+
 function HomePage() {
   const [projects, setProjects] = useState(siteData.projects);
   const [heroSlide, setHeroSlide] = useState(0);
+  const [selectedDirector, setSelectedDirector] = useState(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -942,56 +1012,95 @@ function HomePage() {
       <Hero />
 
       <section className="about" id="about">
-        <div className="container">
-          <div className="about-layout">
-            <div className="about-left">
-              <span className="section-eyebrow">{siteData.about.eyebrow}</span>
-              <h2 className="section-title-serif">{siteData.about.title}</h2>
-              <div className="title-line-accent"></div>
-              <blockquote className="about-pull-quote">
-                <span>Where Ideas Find Purpose.</span>
-                <br />
-                <span>And Purpose Finds Impact.</span>
-              </blockquote>
-              <p className="about-lead">{siteData.about.lead}</p>
-              <p className="about-tagline">{siteData.about.tagline}</p>
+        {/* Top Banner with diagonal gradient + university overlay */}
+        <div className="about-banner-scei">
+          <div className="container">
+            <div className="about-banner-grid">
+              
+              {/* Left Column: Description */}
+              <div className="about-banner-left">
+                <h2>About Dnyanavishkar</h2>
+                <p>
+                  Dnyanavishkar Foundation is a section-8 non-profit startup incubation centre supported by D Y Patil International University, dedicated to fostering a vibrant culture of innovation, research, and entrepreneurship. We believe that entrepreneurship is a mindset.
+                </p>
+                <p>
+                  Dnyanavishkar Foundation leverages the advanced research capabilities of D Y Patil International University in fields such as Artificial Intelligence, IoT & Robotics, Biotechnology & Healthcare, Green Energy & Sustainability, and EdTech to act as a catalyst of growth for technology-driven start-ups.
+                </p>
+              </div>
+
+              {/* Right Column: Vision & Mission Stack */}
+              <div className="about-banner-right">
+                
+                {/* Vision Card */}
+                <div className="scei-vision-card">
+                  <VisionIcon />
+                  <div className="card-info">
+                    <h3>Vision</h3>
+                    <p>To develop a world-class innovation ecosystem and nurture entrepreneurial minds that contribute to the technological advancement and socio-economic development of the nation.</p>
+                  </div>
+                </div>
+
+                {/* Mission Card */}
+                <div className="scei-mission-card">
+                  <MissionIcon />
+                  <div className="card-info">
+                    <h3>Mission</h3>
+                    <p>To identify, support, and scale early-stage startups and student-led ventures by providing state-of-the-art incubation spaces, dedicated mentorship, seed funding, and strong academic-industry collaboration.</p>
+                  </div>
+                </div>
+
+              </div>
+
             </div>
+          </div>
 
-            <div className="about-right">
-              {siteData.about.paragraphs.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
+          {/* SVG Wave/Slant Bottom Divider */}
+          <div className="banner-curve-divider">
+            <svg viewBox="0 0 1440 100" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0 100 C360 80 720 40 1440 0 L1440 100 Z" fill="#ffffff" />
+            </svg>
+          </div>
+        </div>
 
-              <div className="about-panel">
-                <h3>{siteData.about.whatWeDoTitle}</h3>
-                <ul className="about-list">
-                  {siteData.about.whatWeDo.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
+        {/* Bottom Section: Support Startups */}
+        <div className="about-support-section">
+          <div className="support-section-inner">
+            <h2 className="support-main-title">Dnyanavishkar supports startups in following ways</h2>
+            
+            {/* SVG-based cards — exact SCEI assets */}
+            <div className="support-grid-scei">
+              <div className="support-card">
+                <div className="support-card-shine"></div>
+                <img src="/support-cards/card1.svg" alt="Access to network of journey" />
               </div>
-
-              <div className="about-panel">
-                <h3>{siteData.about.highlightsTitle}</h3>
-                <ul className="about-list">
-                  {siteData.about.highlights.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
+              <div className="support-card">
+                <div className="support-card-shine"></div>
+                <img src="/support-cards/card2.svg" alt="Access to technology lab" />
               </div>
-
-              <div className="about-panel">
-                <h3>{siteData.about.futureTitle}</h3>
-                <ul className="about-list">
-                  {siteData.about.futurePoints.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
+              <div className="support-card">
+                <div className="support-card-shine"></div>
+                <img src="/support-cards/card3.svg" alt="Company registration support" />
               </div>
-
-              <p className="about-closing">
-                <em>{siteData.about.closingLine}</em> {siteData.about.closingDescription}
-              </p>
+              <div className="support-card">
+                <div className="support-card-shine"></div>
+                <img src="/support-cards/card4.svg" alt="Co-working space" />
+              </div>
+              <div className="support-card">
+                <div className="support-card-shine"></div>
+                <img src="/support-cards/card5.svg" alt="Intellectual property rights" />
+              </div>
+              <div className="support-card">
+                <div className="support-card-shine"></div>
+                <img src="/support-cards/card6.svg" alt="Internship support" />
+              </div>
+              <div className="support-card">
+                <div className="support-card-shine"></div>
+                <img src="/support-cards/card7.svg" alt="Technical & business mentoring" />
+              </div>
+              <div className="support-card">
+                <div className="support-card-shine"></div>
+                <img src="/support-cards/card8.svg" alt="Training & workshops" />
+              </div>
             </div>
           </div>
         </div>
@@ -1082,37 +1191,86 @@ function HomePage() {
 
       <section className="voices" id="voices">
         <div className="container">
-          <div className="directors-message-wrap">
+          
+          {/* Subsection 1: Primary Director Message */}
+          <div className="primary-director-section">
             <div className="stories-header directors-header" style={{ textAlign: 'center' }}>
-              <span className="section-eyebrow">{siteData.directorsMessage.eyebrow}</span>
-              <h2 className="section-title-serif">{siteData.directorsMessage.title}</h2>
+              <span className="section-eyebrow">Leadership Note</span>
+              <h2 className="section-title-serif">Trustee's Message</h2>
               <div className="title-line-accent" style={{ margin: '16px auto 0' }}></div>
             </div>
 
-            <div className="directors-grid">
-              {siteData.directorsMessage.directors.map((director) => (
-                <article key={director.name} className="director-card">
-                  <div className="director-photo-wrap">
+            {siteData.directorsMessage.directors.slice(0, 1).map((director) => (
+              <div
+                key={director.name}
+                className="leader-featured-card"
+                onClick={() => setSelectedDirector(director)}
+                role="button"
+                tabIndex={0}
+                aria-label={`View message from ${director.name}`}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    setSelectedDirector(director);
+                  }
+                }}
+              >
+                <div className="director-photo-wrap">
+                  <div className="director-photo-inner">
                     <img src={director.photo} alt={director.name} className="director-photo" />
                   </div>
-                  <div className="director-card-body">
-                    <h3>{director.name}</h3>
-                    {director.role ? <p className="director-role">{director.role}</p> : null}
-                    <p className="director-message">{director.message}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
+                </div>
+                <h3 className="director-name-heading">{director.name}</h3>
+                <div className="director-role-text">
+                  <strong>{director.role}</strong><br />
+                  {director.affiliation}
+                </div>
+              </div>
+            ))}
+          </div>
 
-            <div className="directors-team-cta">
-              <Link to="/team" className="cta-button voices-team-btn">
-                {siteData.directorsMessage.buttonLabel}
-              </Link>
+          {/* Subsection 2: Leadership Grid */}
+          <div className="leadership-section-wrap">
+            <h2 className="section-title-serif text-center mb-4">Leadership at Dnyanavishkar</h2>
+            <div className="title-line-accent" style={{ margin: '0 auto 36px' }}></div>
+            
+            <div className="leadership-grid-scei">
+              {siteData.directorsMessage.directors.slice(1).map((director) => (
+                <div
+                  key={director.name}
+                  className="leader-featured-card"
+                  onClick={() => setSelectedDirector(director)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`View message from ${director.name}`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      setSelectedDirector(director);
+                    }
+                  }}
+                >
+                  <div className="director-photo-wrap">
+                    <div className="director-photo-inner">
+                      <img src={director.photo} alt={director.name} className="director-photo" />
+                    </div>
+                  </div>
+                  <h3 className="director-name-heading">{director.name}</h3>
+                  <div className="director-role-text">
+                    <strong>{director.role}</strong><br />
+                    {director.affiliation}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
+          <div className="directors-team-cta">
+            <Link to="/team" className="cta-button voices-team-btn">
+              {siteData.directorsMessage.buttonLabel}
+            </Link>
+          </div>
+
           <div className="voices-inner">
-            <div className="quote-mark">"</div>
+            <div className="quote-mark">“</div>
             <p className="voice-quote">{siteData.voice.quote}</p>
             <div className="voice-author">
               <div className="voice-author-info">
@@ -1124,54 +1282,128 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="contact" id="contact">
+      <section className="contact-moe-section" id="contact">
         <div className="container">
-          <div className="contact-grid">
-            <div className="contact-panel">
-              <span className="section-eyebrow">Get in Touch</span>
-              <h2 className="section-title-serif">Contact Us</h2>
-              <div className="title-line-accent"></div>
-              <p className="contact-intro">
-                We are always open to collaborations, ideas, and meaningful conversations.
-                Reach out and our team will get back to you soon.
-              </p>
-              <div className="contact-actions">
-                <a href={`mailto:${siteData.contact.email}`} className="cta-button">
-                  Email Us <span className="btn-arrow" aria-hidden="true">&rarr;</span>
-                </a>
-                <Link to="/apply" className="slide-btn contact-secondary-btn">
-                  Apply for Incubation <span className="btn-arrow" aria-hidden="true">&rarr;</span>
-                </Link>
+          
+          <div className="stories-header" style={{ marginBottom: '40px' }}>
+            <span className="section-eyebrow">Get in Touch</span>
+            <h2 className="section-title-serif">For General Query</h2>
+            <div className="title-line-accent"></div>
+          </div>
+
+          <div className="contact-moe-grid-top">
+            {/* Left Card: Logo & Address */}
+            <div className="contact-info-card-left">
+              <div className="contact-logo-header-gradient">
+                <img src={siteData.brand.logo} alt="Dnyanavishkar Logo" />
+              </div>
+              <div className="contact-address-list">
+                <ul>
+                  <li>
+                    <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                      <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    <span>
+                      Sr. N 35/2, Sector 29,<br />
+                      Nigdi Pradhikaran P.C.N.T.,<br />
+                      Pune City, Pune-411044, Maharashtra
+                    </span>
+                  </li>
+                  <li>
+                    <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                    <span>
+                      <a href={`tel:${siteData.contact.phone}`}>{siteData.contact.phone}</a>
+                    </span>
+                  </li>
+                  <li>
+                    <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                      <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <span>
+                      <a href={`mailto:${siteData.contact.email}`}>{siteData.contact.email}</a>
+                    </span>
+                  </li>
+                  <li>
+                    <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                      <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <span>
+                      <a href="mailto:connect@dnyanavishkar.org">connect@dnyanavishkar.org</a>
+                    </span>
+                  </li>
+                </ul>
               </div>
             </div>
 
-            <div className="contact-details contact-cards">
-              <div className="contact-block contact-card">
-                <h4>Office</h4>
-                <p>{siteData.contact.office}</p>
+            {/* Right Card: Google Map */}
+            <div className="contact-map-wrapper">
+              <iframe
+                title="D Y Patil International University Map"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3780.27316719119!2d73.76100127599026!3d18.651728765039308!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2b9e76c79ecf9%3A0xc3b83ef3ab8fa2b1!2sD%20Y%20Patil%20International%20University!5e0!3m2!1sen!2sin!4v1703681326348!5m2!1sen!2sin"
+                allowFullScreen=""
+                loading="lazy"
+              ></iframe>
+            </div>
+          </div>
+
+          {/* Scheme / Program Contacts Row */}
+          <div className="contact-programs-grid">
+            {siteData.contact.programs.map((program) => (
+              <div key={program.name} className="program-contact-card">
+                <h3>{program.name}</h3>
+                <ul>
+                  <li>
+                    <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                      <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <a href={`mailto:${program.email}`}>{program.email}</a>
+                  </li>
+                  <li>
+                    <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                    <a href={`tel:${program.phone}`}>{program.phone}</a>
+                  </li>
+                </ul>
               </div>
-              <div className="contact-block contact-card">
-                <h4>Email</h4>
-                <a href={`mailto:${siteData.contact.email}`}>{siteData.contact.email}</a>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {selectedDirector && (
+        <div className="director-modal-overlay" onClick={() => setSelectedDirector(null)} role="presentation">
+          <div className="director-modal-card" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={`Message from ${selectedDirector.name}`}>
+            <button className="director-modal-close" onClick={() => setSelectedDirector(null)} aria-label="Close modal">
+              &times;
+            </button>
+            <div className="director-modal-content">
+              <div className="director-modal-left">
+                <div className="director-modal-photo-wrap-rect">
+                  <img src={selectedDirector.photo} alt={selectedDirector.name} className="director-modal-photo-rect" />
+                </div>
               </div>
-              <div className="contact-block contact-card">
-                <h4>Mobile</h4>
-                <a href={`tel:${siteData.contact.phone}`}>{siteData.contact.phone}</a>
-              </div>
-              <div className="contact-block contact-card contact-social-card">
-                <h4>Follow Us</h4>
-                <div className="social-links">
-                  {siteData.contact.social.map((item) => (
-                    <a key={item.label} href={item.url} className="social-link" aria-label={item.label}>
-                      {item.short}
-                    </a>
-                  ))}
+              <div className="director-modal-right">
+                <h3 className="director-modal-name">{selectedDirector.name}</h3>
+                <h4 className="director-modal-subtitle">
+                  {selectedDirector.role}<br />
+                  {selectedDirector.affiliation}
+                </h4>
+                <div className="director-modal-message-wrap">
+                  <p className="director-modal-message-text">{selectedDirector.message}</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      )}
     </>
   );
 }
@@ -1313,21 +1545,97 @@ function ProjectsPage() {
   );
 }
 
+const getCategoryDetails = (category) => {
+  const cat = (category || '').toLowerCase();
+  if (cat.includes('sustain')) {
+    return {
+      gradient: 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)',
+      color: '#2e7d32',
+      icon: (
+        <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+        </svg>
+      )
+    };
+  }
+  if (cat.includes('educat')) {
+    return {
+      gradient: 'linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%)',
+      color: '#e65100',
+      icon: (
+        <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+      )
+    };
+  }
+  if (cat.includes('innovat')) {
+    return {
+      gradient: 'linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%)',
+      color: '#0288d1',
+      icon: (
+        <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
+          <line x1="9" y1="18" x2="15" y2="18"></line>
+          <line x1="10" y1="22" x2="14" y2="22"></line>
+        </svg>
+      )
+    };
+  }
+  if (cat.includes('commun')) {
+    return {
+      gradient: 'linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%)',
+      color: '#7b1fa2',
+      icon: (
+        <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      )
+    };
+  }
+  return {
+    gradient: 'linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%)',
+    color: '#00695c',
+    icon: (
+      <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+        <polyline points="16 18 22 12 16 6"></polyline>
+        <polyline points="8 6 2 12 8 18"></polyline>
+      </svg>
+    )
+  };
+};
+
 function ProjectCard({ project, showInternalLink }) {
-  const thumbnailUrl = project.thumbnailUrl || project.thumbnail || '';
-  const snapshotStyle = thumbnailUrl
-    ? { background: 'linear-gradient(135deg, rgba(12, 36, 61, 0.18), rgba(12, 36, 61, 0.08))' }
-    : project.background
-      ? { background: project.background }
-      : { background: 'linear-gradient(135deg, #2a5a8c, #1a3a5c)' };
+  const catDetails = getCategoryDetails(project.category);
+  const localProject = siteData.projects.find((p) => p.id === project.id);
+  const thumbnailUrl = project.thumbnailUrl || project.thumbnail || localProject?.thumbnailUrl || '';
 
   return (
     <div className="project-card" id={project.id}>
-      <div className="project-snapshot" style={snapshotStyle}>
-        {thumbnailUrl ? <img src={thumbnailUrl} alt={`${project.name} thumbnail`} className="project-snapshot-image" /> : null}
+      <div className="project-snapshot" style={thumbnailUrl ? { background: '#f5f5f5' } : { background: catDetails.gradient }}>
+        {thumbnailUrl ? (
+          <img src={thumbnailUrl} alt={`${project.name} thumbnail`} className="project-snapshot-image" />
+        ) : (
+          <div className="project-snapshot-icon-badge" style={{ color: catDetails.color }}>
+            {catDetails.icon}
+          </div>
+        )}
       </div>
       <div className="project-info">
-        <span className="project-category-chip">{project.category}</span>
+        <span
+          className="project-category-chip"
+          style={{
+            backgroundColor: catDetails.color + '14',
+            color: catDetails.color,
+            borderColor: catDetails.color + '2b'
+          }}
+        >
+          {project.category}
+        </span>
         <h3 className="project-name">{project.name}</h3>
         <p className="project-desc">{project.description}</p>
         <div className="project-members">
@@ -1340,13 +1648,9 @@ function ProjectCard({ project, showInternalLink }) {
           </a>
         ) : showInternalLink ? (
           <Link to={`/projects#${project.id}`} className="card-link">
-            View Project <span className="btn-arrow" aria-hidden="true">&rarr;</span>
+            Explore Project <span className="btn-arrow" aria-hidden="true">&rarr;</span>
           </Link>
-        ) : (
-          <a href="#" className="card-link" onClick={(event) => event.preventDefault()}>
-            View Details <span className="btn-arrow" aria-hidden="true">&rarr;</span>
-          </a>
-        )}
+        ) : null}
       </div>
     </div>
   );
@@ -2537,7 +2841,8 @@ function TeamPage() {
                   <img src={member.photo} alt={member.name} className="team-member-photo" />
                 </div>
                 <h3>{member.name}</h3>
-                <p>{member.role}</p>
+                <p><strong>{member.role}</strong></p>
+                {member.affiliation && <p style={{ fontSize: '0.85rem', color: 'var(--clr-text-muted)', marginTop: '4px' }}>{member.affiliation}</p>}
               </article>
             ))}
           </div>
@@ -4906,9 +5211,9 @@ function AdminIdeasPage() {
                       </div>
 
                       <div className="admin-idea-copy">
-                        {project.thumbnailUrl || project.thumbnail ? (
+                        {project.thumbnailUrl || project.thumbnail || siteData.projects.find((p) => p.id === project.id)?.thumbnailUrl ? (
                           <img
-                            src={project.thumbnailUrl || project.thumbnail}
+                            src={project.thumbnailUrl || project.thumbnail || siteData.projects.find((p) => p.id === project.id)?.thumbnailUrl}
                             alt={`${project.name} thumbnail`}
                             className="admin-project-thumb"
                           />
@@ -5164,4 +5469,5 @@ function AdminIdeasPage() {
 }
 
 export default App;
+
 

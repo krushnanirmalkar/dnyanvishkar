@@ -1,15 +1,15 @@
 export const siteData = {
   brand: {
-    name: 'Dnyanaavishkar',
-    fullName: 'Dnyanvishkar Foundation',
-    logo: '/media/footer%20new.png'
+    name: 'Dnyanavishkar',
+    fullName: 'Dnyanavishkar Foundation',
+    logo: '/media/logo updated.png'
   },
   homeHero: {
     tag: 'IDEATE • INNOVATE • INCUBATE',
     title: 'Driving Innovation',
     titleBreak: 'Entrepreneurship & Impact',
     description:
-      'Dnyanvishkar Foundation is a Section-8 non-profit startup incubation centre supported by D Y Patil International University, dedicated to fostering a vibrant culture of innovation, research, and entrepreneurship.',
+      'Dnyanavishkar Foundation is a Section-8 non-profit startup incubation centre supported by D Y Patil International University, dedicated to fostering a vibrant culture of innovation, research, and entrepreneurship.',
     ctaLabel: 'Explore Our Ecosystem',
     ctaTarget: '#about',
     counters: [
@@ -18,10 +18,10 @@ export const siteData = {
     ]
   },
   about: {
-    eyebrow: 'About Dnyanvishkar',
+    eyebrow: 'About Dnyanavishkar',
     title: 'Driving Innovation & Entrepreneurship',
     lead:
-      'Dnyanvishkar Foundation is a section-8 non-profit startup incubation centre supported by D Y Patil International University, dedicated to fostering a vibrant culture of innovation, research, and entrepreneurship.',
+      'Dnyanavishkar Foundation is a section-8 non-profit startup incubation centre supported by D Y Patil International University, dedicated to fostering a vibrant culture of innovation, research, and entrepreneurship.',
     tagline: 'IDEATE • INNOVATE • INCUBATE • IMPACT',
     paragraphs: [
       'We empower students, researchers, and aspiring founders by providing the right ecosystem to transform ideas into impactful ventures.',
@@ -89,7 +89,7 @@ export const siteData = {
         'An automated IoT-based irrigation system developed to optimize water usage in drought-prone areas.',
       team: 'Anjali D., Rohan M., and Rural Tech Group',
       category: 'Sustainability',
-      background: "linear-gradient(135deg, #2a5a8c, #1a3a5c), url('/media/ai-cards/smart-solar.svg') center/cover no-repeat"
+      thumbnailUrl: '/media/projects/smart_solar_irrigation.jpg'
     },
     {
       id: 'project-2',
@@ -98,7 +98,7 @@ export const siteData = {
         'A low-cost, offline-first learning system designed specifically for highly remote rural schools.',
       team: 'Vidyadeep Developers',
       category: 'Education',
-      background: "linear-gradient(135deg, #c8963e, #dbb06a), url('/media/ai-cards/educonnect.svg') center/cover no-repeat"
+      thumbnailUrl: '/media/projects/educonnect_device.jpg'
     },
     {
       id: 'project-4',
@@ -107,7 +107,7 @@ export const siteData = {
         'Sustainable bamboo-based water filtration systems deployed in 50+ remote villages.',
       team: 'H2O Sustainability Squad',
       category: 'Sustainability',
-      background: "linear-gradient(135deg, #457b9d, #1d3557), url('/media/ai-cards/cleanwater.svg') center/cover no-repeat"
+      thumbnailUrl: '/media/projects/cleanwater_filters.jpg'
     },
     {
       id: 'project-5',
@@ -116,7 +116,7 @@ export const siteData = {
         'Low-cost drones equipped with multi-spectral cameras to help local farmers analyze crop health.',
       team: 'SkyFarmers Initiative',
       category: 'Innovation',
-      background: "linear-gradient(135deg, #2d6a4f, #1b4332), url('/media/ai-cards/agridrone.svg') center/cover no-repeat"
+      thumbnailUrl: '/media/projects/agridrone_analytics.jpg'
     },
     {
       id: 'project-6',
@@ -125,7 +125,7 @@ export const siteData = {
         'A 6-month intensive coding bootcamp targeting young women from underprivileged backgrounds.',
       team: 'CodeSisters Maharashtra',
       category: 'Community',
-      background: "linear-gradient(135deg, #e76f51, #9c4130), url('/media/ai-cards/women-tech.svg') center/cover no-repeat"
+      thumbnailUrl: '/media/projects/women_tech_bootcamp.jpg'
     },
     {
       id: 'project-website',
@@ -134,7 +134,7 @@ export const siteData = {
         "A website created for Poonapanjar Pol Trust by students of DYP International University during their rural internship, supporting the trust's outreach and digital presence.",
       team: 'Sarthak Kharche, Yash Kumar Tripathi, Krushna Nirmalkar',
       category: 'Digital Enablement',
-      background: "linear-gradient(135deg, var(--clr-blue), var(--clr-accent)), url('/media/ai-cards/digital-enable.svg') center/cover no-repeat",
+      thumbnailUrl: '/media/projects/poonapanjar_pol_trust.jpg',
       externalUrl: 'https://poonapanjarpoltrust.org',
       externalLabel: 'Visit Website'
     }
@@ -157,7 +157,14 @@ export const siteData = {
     ],
     ctaTitle: 'Ready to Make a Difference?',
     ctaDescription:
-      'Join the Dnyanavishkar ecosystem. Collaborate, incubate, and help turn promising ideas into impactful ventures.'
+      'Join the Dnyanavishkar ecosystem. Collaborate, incubate, and help turn promising ideas into impactful ventures.',
+    programs: [
+      { name: 'SIH', email: 'sih@dypiu.ac.in', phone: '8956571836' },
+      { name: 'IIC', email: 'iic@dypiu.ac.in', phone: '8956571836' },
+      { name: 'NISP', email: 'nisp@dypiu.ac.in', phone: '8956571836' },
+      { name: 'KAPILA', email: 'kapila@dypiu.ac.in', phone: '8956571836' },
+      { name: 'SIC', email: 'schoolinnovation@dypiu.ac.in', phone: '8956571836' }
+    ]
   },
   footer: {
     description:
@@ -190,7 +197,7 @@ export const siteData = {
   voice: {
     quote:
       'An innovation ecosystem that empowers research, startups, and scalable ventures begins with the right support, space, and partnerships.',
-    author: 'Dnyanaavishkar Foundation',
+    author: 'Dnyanavishkar Foundation',
     role: 'Incubation Philosophy'
   },
   directorsMessage: {
@@ -200,21 +207,24 @@ export const siteData = {
     directors: [
       {
         name: 'Mr. Tejas Patil',
-        role: 'Director',
+        role: 'Trustee, Dnyanavishkar Foundation',
+        affiliation: 'Trustee of Dr. D. Y. Patil Education Complex, Akurdi',
         photo: '/media/Tejas%20Patil.jpg',
         message:
           'Our mission is to build long-term social transformation by backing ideas that combine research, entrepreneurship, and impact.'
       },
       {
         name: 'Dr. Manish Bhalla',
-        role: 'Director',
+        role: 'Director, Dnyanavishkar Foundation',
+        affiliation: 'Vice Chancellor, D. Y. Patil International University',
         photo: '/media/Manish-Bhalla.png',
         message:
           'We believe every community has untapped potential, and our role is to unlock it through mentorship, funding, and collaboration.'
       },
       {
         name: 'Dr. Beeran Moidin BM',
-        role: 'Director',
+        role: 'Director, Dnyanavishkar Foundation',
+        affiliation: 'Registrar, D Y Patil International University',
         photo: '/media/BeeranMoidin.jpg',
         message:
           'We believe every community has untapped potential, and our role is to unlock it through mentorship, funding, and collaboration.'
@@ -228,17 +238,20 @@ export const siteData = {
   teamMembers: [
     {
       name: 'Mr. Tejas Patil',
-      role: 'Director',
+      role: 'Trustee, Dnyanavishkar Foundation',
+      affiliation: 'Trustee of Dr. D. Y. Patil Education Complex, Akurdi',
       photo: '/media/Tejas%20Patil.jpg'
     },
     {
       name: 'Dr. Manish Bhalla',
-      role: 'Director',
+      role: 'Director, Dnyanavishkar Foundation',
+      affiliation: 'Vice Chancellor, D. Y. Patil International University',
       photo: '/media/Manish-Bhalla.png'
     },
     {
       name: 'Dr. Beeran Moidin BM',
-      role: 'Director',
+      role: 'Director, Dnyanavishkar Foundation',
+      affiliation: 'Registrar, D Y Patil International University',
       photo: '/media/BeeranMoidin.jpg'
     }
   ],

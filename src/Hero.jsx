@@ -84,10 +84,17 @@ export default function Hero() {
       
       // Subtle zoom effect on slide change
       const img = activeSlide.querySelector('.slide-img-full');
+      const imgBlur = activeSlide.querySelector('.slide-img-blur');
       if (img) {
         gsap.fromTo(img, 
           { scale: 1.08 },
           { scale: 1, duration: 1.6, ease: 'power2.out' }
+        );
+      }
+      if (imgBlur) {
+        gsap.fromTo(imgBlur, 
+          { scale: 1.15 },
+          { scale: 1.05, duration: 1.6, ease: 'power2.out' }
         );
       }
     }
@@ -242,7 +249,9 @@ export default function Hero() {
                 opacity: index === 0 ? 1 : 0
               }}
             >
-              {/* Full Bleed Image */}
+              {/* Blurred Background for Premium Look */}
+              <img src={poster.image} alt="" className="slide-img-blur" />
+              {/* Foreground Image */}
               <img src={poster.image} alt={poster.alt} className="slide-img-full" />
               <div className="slide-glass-overlay" />
             </div>
@@ -251,15 +260,13 @@ export default function Hero() {
 
         {/* Navigation Arrows */}
         <button className="carousel-nav-btn btn-prev" onClick={handlePrev} aria-label="Previous Poster">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m15 18-6-6 6-6"/>
           </svg>
         </button>
         <button className="carousel-nav-btn btn-next" onClick={handleNext} aria-label="Next Poster">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m9 18 6-6-6-6"/>
           </svg>
         </button>
 
