@@ -604,17 +604,35 @@ function SiteLayout({ children }) {
           <div className="container">
             <div className="nav-middle-inner">
               <div className="nav-menu-links">
-                {staggeredMenuItems.map((item, idx) => {
+                {[
+                  ...staggeredMenuItems,
+                  ...(currentUser ? [
+                    { label: 'Dashboard', ariaLabel: 'Go to dashboard', link: '/dashboard' },
+                    { label: 'Logout', ariaLabel: 'Sign out', link: 'logout' }
+                  ] : [
+                    { label: 'Login', ariaLabel: 'Sign in', link: '/auth' }
+                  ])
+                ].map((item, idx) => {
                   const isHash = item.link.startsWith('/#') || item.link.startsWith('#');
                   const targetId = isHash ? (item.link.startsWith('/#') ? item.link.substring(2) : item.link.substring(1)) : '';
+                  const isActive = isHash ? activeSection === targetId : location.pathname === item.link;
                   
                   return (
                     <a
                       key={item.label + idx}
-                      href={item.link || '#'}
-                      className={`nav-menu-link-item ${activeSection === targetId ? 'active' : ''}`}
+                      href={item.link === 'logout' ? '#' : (item.link || '#')}
+                      className={`nav-menu-link-item ${isActive ? 'active' : ''}`}
                       aria-label={item.ariaLabel || item.label}
                       onClick={(e) => {
+                        if (item.link === 'logout') {
+                          e.preventDefault();
+                          if (firebaseAuth) {
+                            signOut(firebaseAuth).then(() => {
+                              navigate('/');
+                            });
+                          }
+                          return;
+                        }
                         if (!item.link || item.link === '#') {
                           e.preventDefault();
                           return;
@@ -2715,6 +2733,24 @@ function DashboardPage() {
 
           {currentUser && !loading && !error ? (
             <>
+              <div className="admin-auth-actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px', flexWrap: 'wrap', gap: '12px' }}>
+                <span className="dashboard-user-info" style={{ color: 'var(--clr-text-secondary)', fontSize: '0.95rem' }}>
+                  Logged in as: <strong>{currentUser.email}</strong>
+                </span>
+                <button
+                  type="button"
+                  className="admin-signout-btn"
+                  onClick={() => {
+                    if (firebaseAuth) {
+                      signOut(firebaseAuth).then(() => {
+                        navigate('/');
+                      });
+                    }
+                  }}
+                >
+                  Sign Out
+                </button>
+              </div>
               <section className="dashboard-section">
                 <h2 className="dashboard-heading">My Ideas</h2>
                 {ideaRecords.length === 0 ? <div className="admin-state">No idea submissions yet.</div> : null}
