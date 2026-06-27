@@ -308,6 +308,14 @@ function App() {
           }
         />
         <Route
+          path="/admin"
+          element={
+            <SiteLayout>
+              <AdminIdeasPage />
+            </SiteLayout>
+          }
+        />
+        <Route
           path="/admin/ideas"
           element={
             <SiteLayout>
@@ -335,6 +343,7 @@ function SiteLayout({ children }) {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [loginDropdownOpen, setLoginDropdownOpen] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterStatus, setNewsletterStatus] = useState({ type: '', message: '' });
 
@@ -530,8 +539,6 @@ function SiteLayout({ children }) {
     { label: 'Portfolio', ariaLabel: 'Portfolio of startups', link: '/projects' },
     { label: 'Ecosystem', ariaLabel: 'Mentors, investors & industry', link: '#' },
     { label: 'Events', ariaLabel: 'Events & workshops', link: '#' },
-    { label: 'Pitch Portal', ariaLabel: 'Submit ideas and get funded', link: '/apply' },
-    { label: 'Apply', ariaLabel: 'Apply for incubation', link: '/apply' },
   ];
 
   return (
@@ -607,6 +614,7 @@ function SiteLayout({ children }) {
                 {[
                   ...staggeredMenuItems,
                   ...(currentUser ? [
+                    ...(isAdmin ? [{ label: 'Admin Portal', ariaLabel: 'Go to admin portal', link: '/admin' }] : []),
                     { label: 'Dashboard', ariaLabel: 'Go to dashboard', link: '/dashboard' },
                     { label: 'Logout', ariaLabel: 'Sign out', link: 'logout' }
                   ] : [
@@ -617,6 +625,64 @@ function SiteLayout({ children }) {
                   const targetId = isHash ? (item.link.startsWith('/#') ? item.link.substring(2) : item.link.substring(1)) : '';
                   const isActive = isHash ? activeSection === targetId : location.pathname === item.link;
                   
+                  if (item.label === 'Login') {
+                    return (
+                      <div
+                        key={item.label + idx}
+                        className="nav-menu-dropdown-wrapper"
+                        onMouseEnter={() => setLoginDropdownOpen(true)}
+                        onMouseLeave={() => setLoginDropdownOpen(false)}
+                      >
+                        <a
+                          href="/auth"
+                          className={`nav-menu-link-item nav-menu-dropdown-trigger ${isActive ? 'active' : ''}`}
+                          aria-label={item.ariaLabel || item.label}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setLoginDropdownOpen(!loginDropdownOpen);
+                          }}
+                        >
+                          {item.label} <span className="dropdown-arrow">▼</span>
+                        </a>
+                        <div className={`nav-dropdown-menu ${loginDropdownOpen ? 'open' : ''}`}>
+                          <a
+                            href="/auth?redirect=/apply?type=incubation"
+                            className="nav-dropdown-item"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setLoginDropdownOpen(false);
+                              navigate('/auth', { state: { redirectTo: '/apply?type=incubation' } });
+                            }}
+                          >
+                            Apply for Incubation
+                          </a>
+                          <a
+                            href="/auth?redirect=/apply?type=pitch"
+                            className="nav-dropdown-item"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setLoginDropdownOpen(false);
+                              navigate('/auth', { state: { redirectTo: '/apply?type=pitch' } });
+                            }}
+                          >
+                            Pitch Portal
+                          </a>
+                          <a
+                            href="/auth?redirect=/dashboard"
+                            className="nav-dropdown-item"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setLoginDropdownOpen(false);
+                              navigate('/auth', { state: { redirectTo: '/dashboard' } });
+                            }}
+                          >
+                            Dashboard Login
+                          </a>
+                        </div>
+                      </div>
+                    );
+                  }
+
                   return (
                     <a
                       key={item.label + idx}
@@ -776,6 +842,7 @@ function SiteLayout({ children }) {
                   <li><Link to="/#ecosystem">Ecosystem</Link></li>
                   <li><Link to="/#resources">Resources</Link></li>
                   <li><Link to="/#contact">Contact Us</Link></li>
+                  <li><Link to="/admin">Admin Portal</Link></li>
                 </ul>
               </div>
 
@@ -1676,13 +1743,23 @@ function ProjectCard({ project, showInternalLink }) {
 
 function ApplyPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [fileLabel, setFileLabel] = useState('Click or drag PDF to upload');
   const [submissionRef, setSubmissionRef] = useState('');
   const [ideaStatus, setIdeaStatus] = useState({ type: '', message: '' });
   const [isSubmittingIdea, setIsSubmittingIdea] = useState(false);
   const [problemStatus, setProblemStatus] = useState({ type: '', message: '' });
   const [isSubmittingProblem, setIsSubmittingProblem] = useState(false);
-  const [activeApplySection, setActiveApplySection] = useState('idea');
+
+  const getInitialSection = () => {
+    const searchParams = new URLSearchParams(location.search);
+    const typeParam = searchParams.get('type');
+    if (typeParam === 'incubation') return 'project'; // Organisation Project Pitch
+    if (typeParam === 'pitch') return 'idea'; // Student Idea Pitch
+    return 'idea';
+  };
+
+  const [activeApplySection, setActiveApplySection] = useState(getInitialSection);
   const [currentUser, setCurrentUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
   const [checkingAdmin, setCheckingAdmin] = useState(false);
@@ -1703,6 +1780,16 @@ function ApplyPage() {
       unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const typeParam = searchParams.get('type');
+    if (typeParam === 'incubation') {
+      setActiveApplySection('project');
+    } else if (typeParam === 'pitch') {
+      setActiveApplySection('idea');
+    }
+  }, [location.search]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1999,7 +2086,16 @@ function ApplyPage() {
             <div className="admin-auth-card">
               <h2>Login Required</h2>
               <p>Sign in to submit ideas and track status from your dashboard.</p>
-              <button type="button" className="submit-btn" onClick={() => navigate('/auth')}>
+              <button
+                type="button"
+                className="submit-btn"
+                onClick={() => {
+                  const currentSectionType = activeApplySection === 'project' ? 'incubation' : 'pitch';
+                  navigate(`/auth?redirect=/apply?type=${currentSectionType}`, {
+                    state: { redirectTo: `/apply?type=${currentSectionType}` }
+                  });
+                }}
+              >
                 Login or Register
               </button>
             </div>
@@ -2396,7 +2492,16 @@ function AuthPage() {
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState({ type: '', message: '' });
   const [submitting, setSubmitting] = useState(false);
-  const redirectTo = location.state?.redirectTo || '/dashboard';
+
+  const searchParams = new URLSearchParams(location.search);
+  const redirectParam = searchParams.get('redirect');
+  const redirectTo = location.state?.redirectTo || redirectParam || '/dashboard';
+  const [redirectPath, setRedirectPath] = useState(redirectTo);
+
+  useEffect(() => {
+    setRedirectPath(redirectTo);
+  }, [redirectTo]);
+
   const googleProvider = useMemo(() => new GoogleAuthProvider(), []);
 
   return (
@@ -2454,7 +2559,7 @@ function AuthPage() {
                   }
 
                   setStatus({ type: 'success', message: 'Authentication successful. Redirecting...' });
-                  navigate(redirectTo, { replace: true });
+                  navigate(redirectPath, { replace: true });
                 } catch (authError) {
                   setStatus({ type: 'error', message: authError.message || 'Authentication failed.' });
                 } finally {
@@ -2477,11 +2582,32 @@ function AuthPage() {
                 id="authPassword"
                 type="password"
                 className="form-control"
-                minLength={6}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 required
               />
+
+              <label className="form-label" htmlFor="authRedirect">Proceed to after Login</label>
+              <select
+                id="authRedirect"
+                className="form-control"
+                value={redirectPath}
+                onChange={(event) => setRedirectPath(event.target.value)}
+                style={{
+                  marginBottom: '20px',
+                  width: '100%',
+                  backgroundColor: '#ffffff',
+                  color: '#333333',
+                  border: '1px solid rgba(21, 101, 192, 0.22)'
+                }}
+              >
+                <option value="/dashboard">Personal Dashboard</option>
+                <option value="/apply?type=incubation">Apply for Incubation</option>
+                <option value="/apply?type=pitch">Pitch Portal</option>
+                {redirectPath && !['/dashboard', '/apply?type=incubation', '/apply?type=pitch'].includes(redirectPath) && (
+                  <option value={redirectPath} hidden>{redirectPath}</option>
+                )}
+              </select>
 
               <button type="submit" className="submit-btn" disabled={submitting}>
                 {submitting ? 'Please wait...' : mode === 'login' ? 'Login' : 'Create Account'}
@@ -2510,7 +2636,7 @@ function AuthPage() {
                   try {
                     await signInWithPopup(firebaseAuth, googleProvider);
                     setStatus({ type: 'success', message: 'Google sign-in successful. Redirecting...' });
-                    navigate(redirectTo, { replace: true });
+                    navigate(redirectPath, { replace: true });
                   } catch (googleAuthError) {
                     setStatus({ type: 'error', message: googleAuthError.message || 'Google sign-in failed.' });
                   } finally {
@@ -2737,19 +2863,29 @@ function DashboardPage() {
                 <span className="dashboard-user-info" style={{ color: 'var(--clr-text-secondary)', fontSize: '0.95rem' }}>
                   Logged in as: <strong>{currentUser.email}</strong>
                 </span>
-                <button
-                  type="button"
-                  className="admin-signout-btn"
-                  onClick={() => {
-                    if (firebaseAuth) {
-                      signOut(firebaseAuth).then(() => {
-                        navigate('/');
-                      });
-                    }
-                  }}
-                >
-                  Sign Out
-                </button>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button
+                    type="button"
+                    className="submit-btn"
+                    style={{ padding: '8px 16px', fontSize: '0.85rem', width: 'auto', margin: 0 }}
+                    onClick={() => navigate('/apply')}
+                  >
+                    + New Submission
+                  </button>
+                  <button
+                    type="button"
+                    className="admin-signout-btn"
+                    onClick={() => {
+                      if (firebaseAuth) {
+                        signOut(firebaseAuth).then(() => {
+                          navigate('/');
+                        });
+                      }
+                    }}
+                  >
+                    Sign Out
+                  </button>
+                </div>
               </div>
               <section className="dashboard-section">
                 <h2 className="dashboard-heading">My Ideas</h2>

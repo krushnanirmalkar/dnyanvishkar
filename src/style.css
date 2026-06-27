@@ -5806,3 +5806,65 @@ textarea.form-control {
         font-size: 1.5rem;
     }
 }
+
+/* Navigation Login Dropdown */
+.nav-menu-dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-arrow {
+    font-size: 0.6rem;
+    margin-left: 6px;
+    vertical-align: middle;
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.nav-menu-dropdown-wrapper:hover .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.nav-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #0a2540;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 2px solid var(--clr-accent-light, #c9f31d);
+    border-radius: 4px;
+    min-width: 210px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    padding: 8px 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1010;
+}
+
+.nav-menu-dropdown-wrapper:hover .nav-dropdown-menu,
+.nav-menu-dropdown-wrapper .nav-dropdown-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.nav-dropdown-item {
+    display: block;
+    padding: 10px 16px;
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-decoration: none;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.nav-dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff !important;
+    padding-left: 20px;
+}
