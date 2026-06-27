@@ -3,7 +3,7 @@ import { Link, Route, Routes, useLocation, useNavigate, useParams } from 'react-
 import { GoogleAuthProvider, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
 import { siteData } from './data/siteData';
 import CircularText from './CircularText';
-import StaggeredMenu from './StaggeredMenu';
+import Hero from './Hero';
 import { firebaseAuth, firebaseConfigError } from './firebase';
 
 const featuredProjectIds = ['project-1', 'project-2', 'project-website'];
@@ -231,7 +231,7 @@ function App() {
         return;
       }
 
-      const offset = (navbar?.offsetHeight || 0) + (marquee?.offsetHeight || 0);
+      const offset = (navbar?.offsetHeight || 0);
       const top = Math.max(target.getBoundingClientRect().top + window.scrollY - offset, 0);
       window.setTimeout(() => {
         smoothScrollTo(top);
@@ -335,6 +335,18 @@ function SiteLayout({ children }) {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterStatus, setNewsletterStatus] = useState({ type: '', message: '' });
+
+  const handleNewsletterSubmit = (e) => {
+    e.preventDefault();
+    if (!newsletterEmail) return;
+    setNewsletterStatus({ type: 'success', message: 'Successfully subscribed to the newsletter!' });
+    setNewsletterEmail('');
+    setTimeout(() => {
+      setNewsletterStatus({ type: '', message: '' });
+    }, 5000);
+  };
   const suppressSectionUpdatesRef = useRef(false);
   const suppressFrameRef = useRef(0);
   const isHome = location.pathname === '/';
@@ -425,8 +437,7 @@ function SiteLayout({ children }) {
         return;
       }
 
-      const marquee = document.getElementById('navMarquee');
-      const headerOffset = (navbar?.offsetHeight || 0) + (marquee?.offsetHeight || 0);
+      const headerOffset = (navbar?.offsetHeight || 0);
       const scrollAnchor = window.scrollY + headerOffset + 8;
 
       let currentSection = 'hero';
@@ -478,13 +489,12 @@ function SiteLayout({ children }) {
     event.preventDefault();
 
     const navbar = document.getElementById('navbar');
-    const marquee = document.getElementById('navMarquee');
     const target = id === 'hero' ? null : document.getElementById(id);
     const top = id === 'hero'
       ? 0
       : target
         ? Math.max(
-            target.getBoundingClientRect().top + window.scrollY - ((navbar?.offsetHeight || 0) + (marquee?.offsetHeight || 0)),
+            target.getBoundingClientRect().top + window.scrollY - (navbar?.offsetHeight || 0),
             0
           )
         : null;
@@ -527,71 +537,94 @@ function SiteLayout({ children }) {
   return (
     <>
       <nav className="navbar" id="navbar">
-        <div className="container">
-          <div className="nav-inner">
-            <Link
-              to="/"
-              className="nav-logo"
-              id="navLogo"
-              onClick={(event) => {
-                if (!isHome) {
-                  return;
-                }
+        {/* Section 1: Logos (Dnyanvishkar left, CIIE right) */}
+        <div className="nav-top-bar">
+          <div className="container">
+            <div className="nav-top-inner">
+              <Link
+                to="/"
+                className="nav-logo"
+                id="navLogo"
+                onClick={(event) => {
+                  if (!isHome) {
+                    return;
+                  }
 
-                event.preventDefault();
-                window.history.replaceState(null, '', '/');
-                setActiveSection('hero');
-                window.scrollTo(0, 0);
-              }}
-            >
-              <img src={siteData.brand.logo} alt="Dnyanvishkar Logo" className="nav-logo-img" />
-            </Link>
-            <img src="/media/CIIE_Merged_MASTER_LOGO.webp" alt="CIIE Logo" className="nav-logo-img nav-logo-img-partner" />
+                  event.preventDefault();
+                  window.history.replaceState(null, '', '/');
+                  setActiveSection('hero');
+                  window.scrollTo(0, 0);
+                }}
+              >
+                <img src={siteData.brand.logo} alt="Dnyanvishkar Logo" className="nav-logo-img" />
+              </Link>
+              <img src="/media/CIIE_Merged_MASTER_LOGO.webp" alt="CIIE Logo" className="nav-logo-img nav-logo-img-partner" />
+            </div>
+          </div>
+        </div>
+
+        {/* Section 2: Page Navigation Links (Centered) */}
+        <div className="nav-middle-bar">
+          <div className="container">
+            <div className="nav-middle-inner">
+              <div className="nav-menu-links">
+                {staggeredMenuItems.map((item, idx) => {
+                  const isHash = item.link.startsWith('/#') || item.link.startsWith('#');
+                  const targetId = isHash ? (item.link.startsWith('/#') ? item.link.substring(2) : item.link.substring(1)) : '';
+                  
+                  return (
+                    <a
+                      key={item.label + idx}
+                      href={item.link || '#'}
+                      className={`nav-menu-link-item ${activeSection === targetId ? 'active' : ''}`}
+                      aria-label={item.ariaLabel || item.label}
+                      onClick={(e) => {
+                        if (!item.link || item.link === '#') {
+                          e.preventDefault();
+                          return;
+                        }
+                        if (isHash && isHome && targetId) {
+                          e.preventDefault();
+                          scrollToSection(e, targetId);
+                        } else if (item.link.startsWith('/') && !isHash) {
+                          e.preventDefault();
+                          navigate(item.link);
+                        }
+                      }}
+                    >
+                      {item.label}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
       </nav>
 
-      <StaggeredMenu
-        position="right"
-        isFixed={true}
-        items={staggeredMenuItems}
-        socialItems={[
-          { label: 'Twitter', link: '#' },
-          { label: 'LinkedIn', link: '#' },
-          { label: 'Instagram', link: '#' },
-        ]}
-        displaySocials={true}
-        displayItemNumbering={true}
-        colors={['#0F2D52', '#1E4D8C']}
-        accentColor="#D4A017"
-        menuButtonColor="#0F2D52"
-        openMenuButtonColor="#0F2D52"
-        changeMenuColorOnOpen={false}
-        navigate={navigate}
-      />
-
+      {/* Section 3: Slogan Marquee */}
       <div className="nav-marquee" id="navMarquee" aria-label="Dnyanavishkar slogan ticker">
         <div className="nav-marquee-track">
           <div className="nav-marquee-group">
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE</span>
+            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
+            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
+            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
+            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
+            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
           </div>
           <div className="nav-marquee-group" aria-hidden="true">
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE</span>
+            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
+            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
+            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
+            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
+            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
           </div>
           <div className="nav-marquee-group" aria-hidden="true">
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE</span>
+            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
+            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
+            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
+            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
+            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
           </div>
         </div>
       </div>
@@ -605,40 +638,185 @@ function SiteLayout({ children }) {
         onClick={() => smoothScrollTo(0)}
       >
         ↑
-      </button>
+      </button>      <footer className="footer" id="footer">
+        {/* Accent Line at the very top */}
+        <div className="footer-accent-line"></div>
 
-      <footer className="footer" id="footer">
-        <div className="container">
-          <div className="footer-top">
-            <div className="footer-brand">
-              <Link to="/" className="nav-logo footer-logo">
-                <img src="/media/footer%20new.png" alt="Dnyanvishkar Logo" className="nav-logo-img" />
-              </Link>
-              <p className="footer-desc">{siteData.footer.description}</p>
-            </div>
-            <div className="footer-nav-group">
-              {siteData.footer.columns.map((column) => (
-                <div key={column.title} className="footer-nav-col">
-                  <h4>{column.title}</h4>
-                  {column.links.map((item) =>
-                    item.to ? (
-                      <Link key={item.label} to={item.to}>
-                        {item.label}
-                      </Link>
-                    ) : (
-                      <a key={item.label} href={item.href}>
-                        {item.label}
-                      </a>
-                    )
-                  )}
+        {/* Subtle Radial Glow Effects */}
+        <div className="footer-glow footer-glow-1"></div>
+        <div className="footer-glow footer-glow-2"></div>
+
+        {/* Background Quote Text */}
+        <div className="footer-bg-quote">
+          Where Ideas Find Purpose.<br />And Purpose Finds Impact.
+        </div>
+
+
+
+        <div className="container footer-container">
+          <div className="footer-grid">
+            
+            {/* Left Section (Foundation Identity) */}
+            <div className="footer-brand-section">
+              <div className="footer-brand-header">
+                <Link to="/" className="footer-logo-link">
+                  <img src="/media/logo.png" alt="Dnyanavishkar Foundation Logo" className="footer-logo-img" />
+                  <div className="footer-logo-text-wrapper">
+                    <span className="footer-logo-title">DNYANAVISHKAR FOUNDATION</span>
+                    <span className="footer-logo-tagline">IDEATE. INNOVATE. INCUBATE. IMPACT.</span>
+                  </div>
+                </Link>
+              </div>
+
+              <p className="footer-description-text">
+                Official innovation, incubation and entrepreneurship ecosystem supported by DY Patil International University.
+              </p>
+
+              <div className="footer-contact-info">
+                <div className="footer-contact-item">
+                  <span className="footer-contact-icon">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                  </span>
+                  <span className="footer-contact-text">DY Patil International University, Akurdi, Pune</span>
                 </div>
-              ))}
+
+                <div className="footer-contact-item">
+                  <span className="footer-contact-icon">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                      <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                  </span>
+                  <a href="mailto:connect@dnyanavishkar.org" className="footer-contact-link">
+                    connect@dnyanavishkar.org
+                  </a>
+                </div>
+
+                <div className="footer-contact-item">
+                  <span className="footer-contact-icon">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                      <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                    </svg>
+                  </span>
+                  <a href="tel:+918956571836" className="footer-contact-link">
+                    +91 XXXXX XXXXX
+                  </a>
+                </div>
+              </div>
+            </div>
+            {/* Links and Stay Connected Columns */}
+            <div className="footer-links-grid">
+              
+              {/* Quick Links Column */}
+              <div className="footer-column">
+                <h4 className="footer-column-title">Quick Links</h4>
+                <ul className="footer-links-list">
+                  <li><Link to="/#about">About Us</Link></li>
+                  <li><Link to="/#initiatives">Our Initiatives</Link></li>
+                  <li><Link to="/projects">Our Ventures</Link></li>
+                  <li><Link to="/#programmes">Programmes</Link></li>
+                  <li><Link to="/#impact">Impact Stories</Link></li>
+                  <li><Link to="/#events">Events</Link></li>
+                  <li><Link to="/#gateway">Innovation Gateway</Link></li>
+                  <li><Link to="/#ecosystem">Ecosystem</Link></li>
+                  <li><Link to="/#resources">Resources</Link></li>
+                  <li><Link to="/#contact">Contact Us</Link></li>
+                </ul>
+              </div>
+
+              {/* Resources Column */}
+              <div className="footer-column">
+                <h4 className="footer-column-title">Resources</h4>
+                <ul className="footer-links-list">
+                  <li><a href="#funding">Funding Opportunities</a></li>
+                  <li><a href="#schemes">Government Schemes</a></li>
+                  <li><a href="#toolkit">Startup Toolkit</a></li>
+                  <li><a href="#pitchdeck">Pitch Deck Templates</a></li>
+                  <li><a href="#research">Research Resources</a></li>
+                  <li><a href="#knowledge">Knowledge Hub</a></li>
+                  <li><a href="#faqs">FAQs</a></li>
+                  <li><a href="#downloads">Downloads</a></li>
+                </ul>
+              </div>
+
+              {/* Legal Column */}
+              <div className="footer-column">
+                <h4 className="footer-column-title">Legal</h4>
+                <ul className="footer-links-list">
+                  <li><Link to="/privacy">Privacy Policy</Link></li>
+                  <li><Link to="/terms">Terms of Use</Link></li>
+                  <li><Link to="/disclaimer">Disclaimer</Link></li>
+                  <li><Link to="/sitemap">Sitemap</Link></li>
+                </ul>
+              </div>
+
+              {/* Stay Connected Column */}
+              <div className="footer-column footer-subscribe-column">
+                <h4 className="footer-column-title">Stay Connected</h4>
+                <p className="footer-subscribe-desc">
+                  Subscribe to our newsletter to receive updates on funding rounds, incubation cohorts, and events.
+                </p>
+                <form className="footer-subscribe-form" onSubmit={handleNewsletterSubmit}>
+                  <input 
+                    type="email" 
+                    placeholder="Enter your email address" 
+                    className="footer-subscribe-input" 
+                    value={newsletterEmail}
+                    onChange={(e) => setNewsletterEmail(e.target.value)}
+                    required 
+                  />
+                  <button type="submit" className="footer-subscribe-btn">
+                    Subscribe
+                  </button>
+                  {newsletterStatus.message && (
+                    <p className={`footer-subscribe-status ${newsletterStatus.type}`}>
+                      {newsletterStatus.message}
+                    </p>
+                  )}
+                </form>
+                
+                {/* Social Icons */}
+                <div className="footer-social-icons">
+                  <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="footer-social-icon-btn" aria-label="LinkedIn">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+                    </svg>
+                  </a>
+                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="footer-social-icon-btn" aria-label="Instagram">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                      <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6A3.6 3.6 0 0 0 16.4 4H7.6m12.4 2.25a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10m0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+                    </svg>
+                  </a>
+                  <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="footer-social-icon-btn" aria-label="YouTube">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                      <path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.06v1.76c0 .57-.03 1.27-.1 2.06-.06.8-.15 1.43-.28 1.9a2.5 2.5 0 0 1-1.76 1.77C18.27 20 15 20 12 20s-6.27 0-7.77-.37a2.5 2.5 0 0 1-1.76-1.77c-.13-.47-.23-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.06v-1.76c0-.57.03-1.27.1-2.06.05-.8.15-1.43.28-1.9a2.5 2.5 0 0 1 1.76-1.77C5.73 4 9 4 12 4s6.27 0 7.77.37a2.5 2.5 0 0 1 1.76 1.77z"/>
+                    </svg>
+                  </a>
+                  <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="footer-social-icon-btn" aria-label="X (formerly Twitter)">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+
             </div>
           </div>
+
+          {/* Bottom Bar */}
           <div className="footer-bottom">
-            <p>(c) {new Date().getFullYear()} {siteData.brand.name}. All rights reserved.</p>
-            <p className="footer-credit">{siteData.footer.credit}</p>
+            {/* Left */}
+            <div className="footer-bottom-left">
+              © 2026 Dnyanavishkar Foundation. All Rights Reserved.
+            </div>
+
+            {/* Right */}
+            <div className="footer-bottom-right">
+              Made with <span className="heart-icon">♥</span> for Innovation & Impact
+            </div>
           </div>
+
         </div>
       </footer>
     </>
@@ -761,45 +939,7 @@ function HomePage() {
 
   return (
     <>
-      <section className="hero-slider" id="hero">
-        <div className="slides-wrapper" id="slidesWrapper">
-          {heroSlides.map((slide, index) => (
-            <div
-              key={slide.id}
-              className={`slide${heroSlide === index ? ' active' : ''}`}
-              data-index={index}
-              style={{ background: slide.background }}
-            >
-              <div className="slide-overlay" style={{ background: 'rgba(0, 0, 0, 0.38)' }}></div>
-              <div className="slide-content">
-                <div className="slide-content-left">
-                  {slide.eyebrow ? <span className="slide-overline">{slide.eyebrow}</span> : null}
-                  {slide.isManifesto ? (
-                    <h1 className="slide-title slide-title-manifesto">
-                      <span className="manifesto-word">IDEATE</span>
-                      <span className="manifesto-word">INNOVATE</span>
-                      <span className="manifesto-word">INCUBATE</span>
-                    </h1>
-                  ) : (
-                    <h1 className="slide-title">{slide.title}</h1>
-                  )}
-                  <p className="slide-desc">{slide.desc}</p>
-                  {slide.cta.isRouterLink ? (
-                    <Link to={slide.cta.href} className="slide-btn">
-                      {slide.cta.label} <span className="btn-arrow" aria-hidden="true">&rarr;</span>
-                    </Link>
-                  ) : (
-                    <a href={slide.cta.href} className="slide-btn">
-                      {slide.cta.label} <span className="btn-arrow" aria-hidden="true">&rarr;</span>
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-      </section>
+      <Hero />
 
       <section className="about" id="about">
         <div className="container">

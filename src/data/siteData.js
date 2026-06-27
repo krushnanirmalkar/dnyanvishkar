@@ -2,7 +2,7 @@ export const siteData = {
   brand: {
     name: 'Dnyanaavishkar',
     fullName: 'Dnyanvishkar Foundation',
-    logo: '/media/logo%20(3).png'
+    logo: '/media/footer%20new.png'
   },
   homeHero: {
     tag: 'IDEATE • INNOVATE • INCUBATE',

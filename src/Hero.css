@@ -1,0 +1,209 @@
+/* ==========================================================================
+   FULL VIEWPORT HERO CAROUSEL STYLES
+   Minimalist design showcasing stretched full-screen posters with particles
+   ========================================================================== */
+
+.premium-hero.full-viewport-hero {
+  position: relative;
+  height: 60vh; /* Slimmer height so content below is visible immediately */
+  min-height: 480px; /* Safeguard minimum height for readability of poster aspect ratios */
+  width: 100%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #010610; /* Extra deep navy */
+  color: #f8fafc;
+  z-index: 10;
+}
+
+/* Particle Canvas Overlay */
+.hero-particle-canvas.overlay-particles {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none; /* Let clicks pass through to navigation elements */
+  opacity: 0.55;
+}
+
+/* Full Screen Carousel Wrapper */
+.hero-carousel-wrapper.full-screen-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.hero-carousel-slides {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transform: scale(0.98);
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.carousel-slide.slide-active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+.slide-img-full {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill; /* Stretch the image to both directions (width and height) to cover space fully */
+  border-radius: 0;
+  will-change: transform;
+  padding: 0;
+}
+
+.slide-glass-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(2, 9, 22, 0.2) 0%,
+    transparent 20%,
+    transparent 80%,
+    rgba(2, 9, 22, 0.5) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Navigation Buttons */
+.carousel-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(10, 25, 47, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(248, 250, 252, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.carousel-nav-btn:hover {
+  background: rgba(21, 101, 192, 0.85); /* Royal Blue */
+  border-color: #ff6f00; /* Orange Accent */
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(255, 111, 0, 0.45);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.btn-prev {
+  left: 40px;
+}
+
+.btn-next {
+  right: 40px;
+}
+
+@media (max-width: 991px) {
+  .btn-prev {
+    left: 20px;
+  }
+  .btn-next {
+    right: 20px;
+  }
+  
+  .carousel-nav-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (max-width: 576px) {
+  .btn-prev {
+    left: 10px;
+  }
+  .btn-next {
+    right: 10px;
+  }
+}
+
+/* Dots and Progress Indicator */
+.carousel-dots-container {
+  position: absolute;
+  bottom: 20px; /* Shift dots slightly higher to float clean of bottom space */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.carousel-dot-indicator {
+  position: relative;
+  width: 60px;
+  height: 8px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  outline: none;
+}
+
+.dot-progress-bg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  overflow: hidden;
+  transition: background 0.3s ease;
+}
+
+.carousel-dot-indicator:hover .dot-progress-bg {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.dot-progress-fill {
+  display: block;
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #ff6f00, #fbbf24); /* Orange to Gold */
+  border-radius: 2px;
+}
+
+.carousel-dot-indicator.dot-active .dot-progress-bg {
+  background: rgba(255, 255, 255, 0.25);
+  height: 4px;
+}
