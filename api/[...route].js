@@ -17,7 +17,11 @@ import {
   toggleProblemFollow,
   toggleProblemVote,
   updateIdeaStatus,
-  updateProblem
+  updateProblem,
+  addEvent,
+  deleteEvent,
+  getEvents,
+  updateEvent
 } from './_lib/submission-store.js';
 import { isAdminAuthorized } from './_lib/admin-auth.js';
 import { getAuthenticatedUser } from './_lib/user-auth.js';
@@ -204,6 +208,194 @@ async function seedProjectsIfNeeded() {
 
   await Promise.all(seededProjects.map((project) => addProject(project)));
   return seededProjects;
+}
+
+function createEventId() {
+  return `EVENT-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+}
+
+function normalizeEventInput(body = {}) {
+  return {
+    title: String(body.title || '').trim(),
+    tag: String(body.tag || '').trim(),
+    image: String(body.image || '').trim(),
+    description: String(body.description || '').trim(),
+    featured: !!body.featured
+  };
+}
+
+function validateEventInput(event) {
+  if (!event.title || !event.tag || !event.image || !event.description) {
+    return 'Title, tag, image, and description are required.';
+  }
+  return '';
+}
+
+const INITIAL_EVENTS = [
+  {
+    title: "Collaboration with Curtis Instruments India Pvt Ltd for Corporate Social Responsibility Grants",
+    tag: "CSR Grant Partnership",
+    image: "https://scei.org.in/wp-content/uploads/2024/04/event-1.jpg",
+    description: "Curtis Instruments India Pvt Ltd has partnered with Dnyanavishkar Foundation to extend Corporate Social Responsibility (CSR) grants to support technology-driven start-ups and innovation cohorts. This collaborative program provides critical seed-stage grants and technical validation pathways for startups specializing in green mobility, power electronics, battery management, and smart hardware designs.",
+    featured: true
+  },
+  {
+    title: "SCEI Incubated start-up Guruji AIR collaborated with Western University, Cambodia",
+    tag: "International Partnership",
+    image: "https://scei.org.in/wp-content/uploads/2024/04/event-3.jpg",
+    description: "Our incubated tech venture, Guruji AIR, has signed a historic bilateral international partnership with Western University in Cambodia. This initiative focuses on applying localized IoT-based environmental sensors and agricultural telemetry networks to optimize crop health, monitor soil salinity, and foster cross-border academic research exchange between Cambodian scholars and our laboratory teams.",
+    featured: true
+  },
+  {
+    title: "SCEI signed an MOU with CIMP Business Incubation and Innovation Foundation on 11th March 24",
+    tag: "Incubation MOU",
+    image: "https://scei.org.in/wp-content/uploads/2024/04/event-5.jpg",
+    description: "Dnyanavishkar Foundation signed a Memorandum of Understanding (MOU) with the CIMP Business Incubation and Innovation Foundation to foster mutual incubation channels. This agreement enables resource sharing, co-incubation pathways, collaborative mentorship panels, and early investor network sharing to benefit entrepreneurs in both regions.",
+    featured: true
+  },
+  {
+    title: "SCEI conducted a session for MSFDA with STLRC on Entrepreneurship & Innovations",
+    tag: "Faculty Development Program",
+    image: "https://scei.org.in/wp-content/uploads/2024/04/event-6.jpg",
+    description: "Our training team led a highly interactive development seminar on building campus-level startup ecosystems for the Maharashtra State Faculty Development Academy (MSFDA) in collaboration with STLRC. The session centered on introducing design thinking in curriculums, commercializing academic research projects, and setting up institutional pre-incubation labs.",
+    featured: false
+  },
+  {
+    title: "Durham University delegates visit SCEI: 10th Jan 2024",
+    tag: "Global Delegation Visit",
+    image: "https://scei.org.in/wp-content/uploads/2024/04/event-7.jpg",
+    description: "A high-profile academic delegation from Durham University, UK, visited our campus to review technology translation pathways. Discussions centered around global venture scaling pathways, dual-incubation options for international student ventures, joint research publications, and global market landing programs in fields of biotechnology and clean technology.",
+    featured: false
+  },
+  {
+    title: "SCEI at State Level Event in Nagpur Startup Expo 2023",
+    tag: "Regional Startup Expo",
+    image: "https://scei.org.in/wp-content/uploads/2023/12/scei-nagpur-startup-expo-2023.jpg",
+    description: "Dnyanavishkar Foundation showcased the strength of its cohort portfolio at the state-level Nagpur Startup Expo. Our startup founders got a platform to pitch their products directly to ministerial delegations, ecosystem advisors, corporate buyers, and active angel investors, receiving several inquiries for commercial scaleups.",
+    featured: false
+  }
+];
+
+async function seedEventsIfNeeded() {
+  const existing = await getEvents();
+  if (Array.isArray(existing) && existing.length > 0) {
+    return existing;
+  }
+
+  const timestamp = new Date().toISOString();
+  const seededEvents = INITIAL_EVENTS.map((event, idx) => ({
+    id: `EVENT-SEED-${idx}`,
+    ...event,
+    createdAt: timestamp,
+    updatedAt: timestamp
+  }));
+
+  await Promise.all(seededEvents.map((event) => addEvent(event)));
+  return seededEvents;
+}
+
+function sortEvents(eventsList) {
+  return [...eventsList].sort((left, right) => {
+    return new Date(right.updatedAt || right.createdAt || 0).getTime() - new Date(left.updatedAt || left.createdAt || 0).getTime();
+  });
+}
+
+async function handleEvents(req, res) {
+  if (req.method !== 'GET') {
+    return methodNotAllowed(res, ['GET']);
+  }
+
+  const events = await seedEventsIfNeeded();
+  return json(res, 200, { events: sortEvents(events) });
+}
+
+async function handleAdminEvents(req, res) {
+  if (!(await isAdminAuthorized(req))) {
+    return json(res, 401, { message: 'Unauthorized' });
+  }
+
+  if (req.method === 'GET') {
+    const events = await seedEventsIfNeeded();
+    return json(res, 200, { events: sortEvents(events) });
+  }
+
+  if (req.method === 'POST') {
+    const body = await readJsonBody(req);
+    const normalized = normalizeEventInput(body || {});
+    const validationError = validateEventInput(normalized);
+
+    if (validationError) {
+      return json(res, 400, { message: validationError });
+    }
+
+    const timestamp = new Date().toISOString();
+    const record = {
+      id: createEventId(),
+      ...normalized,
+      createdAt: timestamp,
+      updatedAt: timestamp
+    };
+
+    await addEvent(record);
+    return json(res, 200, { message: 'Event created successfully.', event: record });
+  }
+
+  return methodNotAllowed(res, ['GET', 'POST']);
+}
+
+async function handleUpdateEvent(req, res) {
+  if (req.method !== 'POST') {
+    return methodNotAllowed(res, ['POST']);
+  }
+
+  if (!(await isAdminAuthorized(req))) {
+    return json(res, 401, { message: 'Unauthorized' });
+  }
+
+  const body = await readJsonBody(req);
+  const id = String(body?.id || '').trim();
+
+  if (!id) {
+    return json(res, 400, { message: 'Event id is required.' });
+  }
+
+  const normalized = normalizeEventInput(body || {});
+  const validationError = validateEventInput(normalized);
+
+  if (validationError) {
+    return json(res, 400, { message: validationError });
+  }
+
+  const updated = await updateEvent(id, normalized);
+  if (!updated) {
+    return json(res, 404, { message: 'Event not found.' });
+  }
+
+  return json(res, 200, { message: 'Event updated successfully.', event: updated });
+}
+
+async function handleDeleteEvent(req, res) {
+  if (req.method !== 'POST') {
+    return methodNotAllowed(res, ['POST']);
+  }
+
+  if (!(await isAdminAuthorized(req))) {
+    return json(res, 401, { message: 'Unauthorized' });
+  }
+
+  const body = await readJsonBody(req);
+  const id = String(body?.id || '').trim();
+
+  if (!id) {
+    return json(res, 400, { message: 'Event id is required.' });
+  }
+
+  const removed = await deleteEvent(id);
+  if (!removed) {
+    return json(res, 404, { message: 'Event not found.' });
+  }
+
+  return json(res, 200, { message: 'Event deleted successfully.' });
 }
 
 async function handleAdminAuth(req, res) {
@@ -909,6 +1101,14 @@ async function handleRoute(req, res) {
   switch (route) {
     case 'admin-auth':
       return handleAdminAuth(req, res);
+    case 'events':
+      return handleEvents(req, res);
+    case 'admin-events':
+      return handleAdminEvents(req, res);
+    case 'update-event':
+      return handleUpdateEvent(req, res);
+    case 'delete-event':
+      return handleDeleteEvent(req, res);
     case 'projects':
       return handleProjects(req, res);
     case 'admin-projects':

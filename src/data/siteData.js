@@ -240,19 +240,22 @@ export const siteData = {
       name: 'Mr. Tejas Patil',
       role: 'Trustee, Dnyanavishkar Foundation',
       affiliation: 'Trustee of Dr. D. Y. Patil Education Complex, Akurdi',
-      photo: '/media/Tejas%20Patil.jpg'
+      photo: '/media/Tejas%20Patil.jpg',
+      message: 'Our mission is to build long-term social transformation by backing ideas that combine research, entrepreneurship, and impact.'
     },
     {
       name: 'Dr. Manish Bhalla',
       role: 'Director, Dnyanavishkar Foundation',
       affiliation: 'Vice Chancellor, D. Y. Patil International University',
-      photo: '/media/Manish-Bhalla.png'
+      photo: '/media/Manish-Bhalla.png',
+      message: 'We believe every community has untapped potential, and our role is to unlock it through mentorship, funding, and collaboration.'
     },
     {
       name: 'Dr. Beeran Moidin BM',
       role: 'Director, Dnyanavishkar Foundation',
       affiliation: 'Registrar, D Y Patil International University',
-      photo: '/media/BeeranMoidin.jpg'
+      photo: '/media/BeeranMoidin.jpg',
+      message: 'We believe every community has untapped potential, and our role is to unlock it through mentorship, funding, and collaboration.'
     }
   ],
   applicationCategories: [

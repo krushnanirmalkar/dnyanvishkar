@@ -135,25 +135,11 @@ const heroSlides = [
   },
 ];
 
-function smoothScrollTo(targetTop, duration = 850) {
-  const startTop = window.scrollY;
-  const distance = targetTop - startTop;
-  const startTime = performance.now();
-
-  const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-
-  const step = (currentTime) => {
-    const elapsed = currentTime - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = easeInOutCubic(progress);
-    window.scrollTo(0, startTop + distance * eased);
-
-    if (progress < 1) {
-      window.requestAnimationFrame(step);
-    }
-  };
-
-  window.requestAnimationFrame(step);
+function smoothScrollTo(targetTop) {
+  window.scrollTo({
+    top: targetTop,
+    behavior: 'smooth'
+  });
 }
 
 function SitePreloader({ isExiting }) {
@@ -368,6 +354,7 @@ function SiteLayout({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loginDropdownOpen, setLoginDropdownOpen] = useState(false);
+  const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterStatus, setNewsletterStatus] = useState({ type: '', message: '' });
 
@@ -452,7 +439,11 @@ function SiteLayout({ children }) {
     const onScroll = () => {
       const navbar = document.getElementById('navbar');
       if (navbar) {
-        navbar.classList.toggle('scrolled', window.scrollY > 10);
+        const threshold = window.innerWidth > 991 ? 64 : 52;
+        const scrollY = window.scrollY;
+        const translation = Math.max(-threshold, -scrollY);
+        navbar.style.transform = `translateY(${translation}px)`;
+        navbar.classList.toggle('scrolled', scrollY > threshold);
       }
 
       setShowBackToTop(window.scrollY > 500);
@@ -471,11 +462,11 @@ function SiteLayout({ children }) {
       }
 
       const headerOffset = (navbar?.offsetHeight || 0);
-      const scrollAnchor = window.scrollY + headerOffset + 8;
+      const scrollAnchor = window.scrollY + headerOffset + 20;
 
       let currentSection = 'hero';
       sections.forEach((section) => {
-        const sectionTop = section.offsetTop;
+        const sectionTop = section.getBoundingClientRect().top + window.scrollY;
         if (scrollAnchor >= sectionTop) {
           currentSection = section.getAttribute('id') || currentSection;
         }
@@ -489,7 +480,7 @@ function SiteLayout({ children }) {
     return () => {
       window.removeEventListener('scroll', onScroll);
     };
-  }, []);
+  }, [isHome]);
 
   useEffect(() => {
     return () => {
@@ -557,7 +548,8 @@ function SiteLayout({ children }) {
   };
 
   const staggeredMenuItems = [
-    { label: 'About', ariaLabel: 'About Dnyanavishkar', link: '/#about' },
+    { label: 'Home', ariaLabel: 'Go to main page', link: '/' },
+    { label: 'About Us', ariaLabel: 'About Dnyanavishkar', link: '/#about' },
     { label: 'Our Startups', ariaLabel: 'Current incubatees', link: '/projects' },
     { label: 'Incubation', ariaLabel: 'Incubation Programme', link: '/incubation' },
     { label: 'Ecosystem', ariaLabel: 'Mentors, investors & industry', link: '/ecosystem' },
@@ -637,17 +629,70 @@ function SiteLayout({ children }) {
                 {[
                   ...staggeredMenuItems,
                   ...(currentUser ? [
-                    ...(isAdmin ? [{ label: 'Admin Portal', ariaLabel: 'Go to admin portal', link: '/admin' }] : []),
-                    { label: 'Dashboard', ariaLabel: 'Go to dashboard', link: '/dashboard' },
+                    ...(isAdmin 
+                      ? [{ label: 'Admin Portal', ariaLabel: 'Go to admin portal', link: '/admin' }] 
+                      : [{ label: 'Dashboard', ariaLabel: 'Go to dashboard', link: '/dashboard' }]
+                    ),
                     { label: 'Logout', ariaLabel: 'Sign out', link: 'logout' }
                   ] : [
                     { label: 'Login', ariaLabel: 'Sign in', link: '/auth' }
-                  ])
+                  ]),
+                  { label: 'Apply for Incubation', ariaLabel: 'Apply for incubation program', link: '/apply?type=incubation', isCTA: true }
                 ].map((item, idx) => {
                   const isHash = item.link.startsWith('/#') || item.link.startsWith('#');
                   const targetId = isHash ? (item.link.startsWith('/#') ? item.link.substring(2) : item.link.substring(1)) : '';
                   const isActive = isHash ? activeSection === targetId : location.pathname === item.link;
                   
+                  if (item.label === 'About Us') {
+                    return (
+                      <div
+                        key={item.label + idx}
+                        className="nav-menu-dropdown-wrapper"
+                        onMouseEnter={() => setAboutDropdownOpen(true)}
+                        onMouseLeave={() => setAboutDropdownOpen(false)}
+                      >
+                        <Link
+                          to="/#about"
+                          className={`nav-menu-link-item nav-menu-dropdown-trigger ${isActive ? 'active' : ''}`}
+                          aria-label={item.ariaLabel || item.label}
+                          onClick={(e) => {
+                            if (isHome) {
+                              e.preventDefault();
+                              scrollToSection(e, 'about');
+                              setAboutDropdownOpen(false);
+                            }
+                          }}
+                        >
+                          About Us <span className="dropdown-arrow">▼</span>
+                        </Link>
+                        <div className={`nav-dropdown-menu ${aboutDropdownOpen ? 'open' : ''}`}>
+                          <Link
+                            to="/#about"
+                            className="nav-dropdown-item"
+                            onClick={(e) => {
+                              setAboutDropdownOpen(false);
+                              if (isHome) {
+                                e.preventDefault();
+                                scrollToSection(e, 'about');
+                              }
+                            }}
+                          >
+                            About Dnyanavishkar
+                          </Link>
+                          <Link
+                            to="/team"
+                            className="nav-dropdown-item"
+                            onClick={() => {
+                              setAboutDropdownOpen(false);
+                            }}
+                          >
+                            Our Team
+                          </Link>
+                        </div>
+                      </div>
+                    );
+                  }
+
                   if (item.label === 'Login') {
                     return (
                       <div
@@ -656,17 +701,14 @@ function SiteLayout({ children }) {
                         onMouseEnter={() => setLoginDropdownOpen(true)}
                         onMouseLeave={() => setLoginDropdownOpen(false)}
                       >
-                        <a
-                          href="/auth"
+                        <Link
+                          to="/auth"
                           className={`nav-menu-link-item nav-menu-dropdown-trigger ${isActive ? 'active' : ''}`}
                           aria-label={item.ariaLabel || item.label}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setLoginDropdownOpen(!loginDropdownOpen);
-                          }}
+                          onClick={() => setLoginDropdownOpen(false)}
                         >
                           {item.label} <span className="dropdown-arrow">▼</span>
-                        </a>
+                        </Link>
                         <div className={`nav-dropdown-menu ${loginDropdownOpen ? 'open' : ''}`}>
                           <a
                             href="/auth?redirect=/apply?type=incubation"
@@ -706,6 +748,19 @@ function SiteLayout({ children }) {
                     );
                   }
 
+                  if (item.isCTA) {
+                    return (
+                      <Link
+                        key={item.label + idx}
+                        to={item.link}
+                        className="nav-cta-btn"
+                        aria-label={item.ariaLabel || item.label}
+                      >
+                        {item.label}
+                      </Link>
+                    );
+                  }
+
                   return (
                     <a
                       key={item.label + idx}
@@ -724,6 +779,17 @@ function SiteLayout({ children }) {
                         }
                         if (!item.link || item.link === '#') {
                           e.preventDefault();
+                          return;
+                        }
+                        if (item.link === '/') {
+                          e.preventDefault();
+                          if (isHome) {
+                            smoothScrollTo(0);
+                            setActiveSection('hero');
+                            window.history.replaceState(null, '', '/');
+                          } else {
+                            navigate('/');
+                          }
                           return;
                         }
                         if (isHash && isHome && targetId) {
@@ -831,8 +897,8 @@ function SiteLayout({ children }) {
                       <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                     </svg>
                   </span>
-                  <a href="mailto:connect@dnyanavishkar.org" className="footer-contact-link">
-                    connect@dnyanavishkar.org
+                  <a href={`mailto:${siteData.contact.email}`} className="footer-contact-link">
+                    {siteData.contact.email}
                   </a>
                 </div>
 
@@ -842,8 +908,8 @@ function SiteLayout({ children }) {
                       <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
                     </svg>
                   </span>
-                  <a href="tel:+918956571836" className="footer-contact-link">
-                    +91 XXXXX XXXXX
+                  <a href={`tel:+91${siteData.contact.phone}`} className="footer-contact-link">
+                    +91 {siteData.contact.phone}
                   </a>
                 </div>
               </div>
@@ -865,7 +931,6 @@ function SiteLayout({ children }) {
                   <li><Link to="/#ecosystem">Ecosystem</Link></li>
                   <li><Link to="/#resources">Resources</Link></li>
                   <li><Link to="/#contact">Contact Us</Link></li>
-                  <li><Link to="/admin">Admin Portal</Link></li>
                 </ul>
               </div>
 
@@ -1004,6 +1069,49 @@ function HomePage() {
   const [projects, setProjects] = useState(siteData.projects);
   const [heroSlide, setHeroSlide] = useState(0);
   const [selectedDirector, setSelectedDirector] = useState(null);
+  const [homeEvents, setHomeEvents] = useState([]);
+  const [selectedHomeEvent, setSelectedHomeEvent] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/events')
+      .then(async (response) => {
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(data?.message || 'Unable to load events.');
+        }
+        return data;
+      })
+      .then((data) => {
+        if (cancelled) return;
+        setHomeEvents(Array.isArray(data?.events) ? data.events : []);
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const featuredEvents = useMemo(() => {
+    const featured = homeEvents.filter((event) => event.featured === true);
+    if (featured.length === 0) {
+      return homeEvents.slice(0, 3);
+    }
+    return featured;
+  }, [homeEvents]);
+
+  useEffect(() => {
+    if (!selectedDirector && !selectedHomeEvent) return;
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        setSelectedDirector(null);
+        setSelectedHomeEvent(null);
+      }
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [selectedDirector, selectedHomeEvent]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -1505,62 +1613,27 @@ function HomePage() {
           </div>
 
           <div className="events-grid">
-            <a 
-              href="https://scei.org.in/collaboration-with-curtis-instruments-india-pvt-ltd-for-csr-grants/" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="event-card-link-wrapper"
-            >
-              <div className="event-item-card">
-                <div className="event-item-image-wrap">
-                  <img src="https://scei.org.in/wp-content/uploads/2024/04/event-1.jpg" alt="Collaboration with Curtis Instruments India Pvt Ltd for Corporate Social Responsibility Grants" className="event-item-img" />
-                </div>
-                <div className="event-item-content">
-                  <h3 className="event-item-title">Collaboration with Curtis Instruments India Pvt Ltd for Corporate Social Responsibility Grants</h3>
-                  <div className="event-item-footer">
-                    <span className="read-more-link">Read Story &rarr;</span>
+            {featuredEvents.map((event) => (
+              <button
+                key={event.id}
+                type="button"
+                className="event-card-link-wrapper"
+                style={{ background: 'none', border: 'none', padding: 0, width: '100%', textAlign: 'left', cursor: 'pointer' }}
+                onClick={() => setSelectedHomeEvent(event)}
+              >
+                <div className="event-item-card">
+                  <div className="event-item-image-wrap">
+                    <img src={event.image} alt={event.title} className="event-item-img" />
+                  </div>
+                  <div className="event-item-content">
+                    <h3 className="event-item-title">{event.title}</h3>
+                    <div className="event-item-footer">
+                      <span className="read-more-link">Read Story &rarr;</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </a>
-
-            <a 
-              href="https://scei.org.in/scei-incubated-start-up-guruji-air-collaborated-with-western-university-cambodia/" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="event-card-link-wrapper"
-            >
-              <div className="event-item-card">
-                <div className="event-item-image-wrap">
-                  <img src="https://scei.org.in/wp-content/uploads/2024/04/event-3.jpg" alt="SCEI Incubated start-up Guruji AIR collaborated with Western University, Cambodia" className="event-item-img" />
-                </div>
-                <div className="event-item-content">
-                  <h3 className="event-item-title">SCEI Incubated start-up Guruji AIR collaborated with Western University, Cambodia</h3>
-                  <div className="event-item-footer">
-                    <span className="read-more-link">Read Story &rarr;</span>
-                  </div>
-                </div>
-              </div>
-            </a>
-
-            <a 
-              href="https://scei.org.in/scei-signed-an-mou-with-cimp-business-incubation-and-innovation-foundation-on-11th-march-24/" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="event-card-link-wrapper"
-            >
-              <div className="event-item-card">
-                <div className="event-item-image-wrap">
-                  <img src="https://scei.org.in/wp-content/uploads/2024/04/event-5.jpg" alt="SCEI signed an MOU with CIMP Business Incubation and Innovation Foundation on 11th March 24" className="event-item-img" />
-                </div>
-                <div className="event-item-content">
-                  <h3 className="event-item-title">SCEI signed an MOU with CIMP Business Incubation and Innovation Foundation on 11th March 24</h3>
-                  <div className="event-item-footer">
-                    <span className="read-more-link">Read Story &rarr;</span>
-                  </div>
-                </div>
-              </div>
-            </a>
+              </button>
+            ))}
           </div>
 
           <div className="text-center" style={{ marginTop: '40px' }}>
@@ -1614,15 +1687,6 @@ function HomePage() {
                     </svg>
                     <span>
                       <a href={`mailto:${siteData.contact.email}`}>{siteData.contact.email}</a>
-                    </span>
-                  </li>
-                  <li>
-                    <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                      <polyline points="22,6 12,13 2,6"></polyline>
-                    </svg>
-                    <span>
-                      <a href="mailto:connect@dnyanavishkar.org">connect@dnyanavishkar.org</a>
                     </span>
                   </li>
                 </ul>
@@ -1689,6 +1753,28 @@ function HomePage() {
                   <p className="director-modal-message-text">{selectedDirector.message}</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {selectedHomeEvent && (
+        <div className="event-modal-overlay" role="presentation" onClick={() => setSelectedHomeEvent(null)}>
+          <div className="event-modal-card" onClick={(e) => e.stopPropagation()}>
+            <button 
+              className="event-modal-close-btn" 
+              onClick={() => setSelectedHomeEvent(null)}
+              aria-label="Close details"
+            >
+              &times;
+            </button>
+            <div className="event-modal-image-wrap">
+              <img src={selectedHomeEvent.image} alt={selectedHomeEvent.title} className="event-modal-img" />
+            </div>
+            <div className="event-modal-body">
+              <span className="event-modal-tag">{selectedHomeEvent.tag}</span>
+              <h2 className="event-modal-title">{selectedHomeEvent.title}</h2>
+              <p className="event-modal-description">{selectedHomeEvent.description}</p>
             </div>
           </div>
         </div>
@@ -2710,7 +2796,7 @@ function AuthPage() {
 
   return (
     <>
-      <header className="page-header admin-page-header">
+      <header className="page-header admin-page-header auth-page-header">
         <div className="container">
           <h1>{mode === 'login' ? 'Login' : 'Create Account'}</h1>
           <p>Access your personal dashboard to track all submissions and statuses.</p>
@@ -2888,6 +2974,7 @@ function DashboardPage() {
   const [solutionRecords, setSolutionRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
     if (!firebaseAuth) {
@@ -3062,16 +3149,64 @@ function DashboardPage() {
           {currentUser && error ? <div className="submission-banner submission-banner--error admin-state">{error}</div> : null}
 
           {currentUser && !loading && !error ? (
-            <>
-              <div className="admin-auth-actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px', flexWrap: 'wrap', gap: '12px' }}>
-                <span className="dashboard-user-info" style={{ color: 'var(--clr-text-secondary)', fontSize: '0.95rem' }}>
-                  Logged in as: <strong>{currentUser.email}</strong>
-                </span>
-                <div style={{ display: 'flex', gap: '12px' }}>
+            <div className="dashboard-layout">
+              <aside className="dashboard-sidebar">
+                <div className="dashboard-sidebar-profile">
+                  <h3>My Dashboard</h3>
+                  <p>{currentUser.email}</p>
+                </div>
+                
+                <ul className="dashboard-sidebar-menu">
+                  <li className={`dashboard-sidebar-item${activeTab === 'overview' ? ' active' : ''}`}>
+                    <button type="button" onClick={() => setActiveTab('overview')}>
+                      <span className="dashboard-sidebar-item-label">
+                        <span className="dashboard-sidebar-item-icon">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+                        </span>
+                        Overview
+                      </span>
+                    </button>
+                  </li>
+                  <li className={`dashboard-sidebar-item${activeTab === 'ideas' ? ' active' : ''}`}>
+                    <button type="button" onClick={() => setActiveTab('ideas')}>
+                      <span className="dashboard-sidebar-item-label">
+                        <span className="dashboard-sidebar-item-icon">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/></svg>
+                        </span>
+                        My Ideas
+                      </span>
+                      <span className="dashboard-badge">{ideaRecords.length}</span>
+                    </button>
+                  </li>
+                  <li className={`dashboard-sidebar-item${activeTab === 'problems' ? ' active' : ''}`}>
+                    <button type="button" onClick={() => setActiveTab('problems')}>
+                      <span className="dashboard-sidebar-item-label">
+                        <span className="dashboard-sidebar-item-icon">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        </span>
+                        Problems
+                      </span>
+                      <span className="dashboard-badge">{problemRecords.length}</span>
+                    </button>
+                  </li>
+                  <li className={`dashboard-sidebar-item${activeTab === 'solutions' ? ' active' : ''}`}>
+                    <button type="button" onClick={() => setActiveTab('solutions')}>
+                      <span className="dashboard-sidebar-item-label">
+                        <span className="dashboard-sidebar-item-icon">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 11.08 20 9 13 16 9 12 7 14 13 20 22 11.08"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                        </span>
+                        My Solutions
+                      </span>
+                      <span className="dashboard-badge">{solutionRecords.length}</span>
+                    </button>
+                  </li>
+                </ul>
+
+                <div className="dashboard-sidebar-footer">
                   <button
                     type="button"
                     className="submit-btn"
-                    style={{ padding: '8px 16px', fontSize: '0.85rem', width: 'auto', margin: 0 }}
+                    style={{ width: '100%', margin: 0 }}
                     onClick={() => navigate('/apply')}
                   >
                     + New Submission
@@ -3079,6 +3214,7 @@ function DashboardPage() {
                   <button
                     type="button"
                     className="admin-signout-btn"
+                    style={{ width: '100%' }}
                     onClick={() => {
                       if (firebaseAuth) {
                         signOut(firebaseAuth).then(() => {
@@ -3090,93 +3226,166 @@ function DashboardPage() {
                     Sign Out
                   </button>
                 </div>
-              </div>
-              <section className="dashboard-section">
-                <h2 className="dashboard-heading">My Ideas</h2>
-                {ideaRecords.length === 0 ? <div className="admin-state">No idea submissions yet.</div> : null}
-                {ideaRecords.length > 0 ? (
-                  <div className="admin-ideas-grid">
-                    {ideaRecords.map((idea) => (
-                      <article key={idea.id} className="admin-idea-card">
-                        <div className="admin-idea-card-header">
-                          <div>
-                            <span className={`admin-status admin-status--${idea.status || 'pending'}`}>
-                              {idea.status || 'pending'}
-                            </span>
-                            <h2>{idea.title}</h2>
-                          </div>
-                          <span className="admin-idea-id">{idea.id}</span>
-                        </div>
-                        <div className="admin-idea-copy">
-                          <p><strong>Problem</strong></p>
-                          <p>{idea.problem}</p>
-                        </div>
-                        <div className="admin-idea-copy">
-                          <p><strong>Solution</strong></p>
-                          <p>{idea.solution}</p>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                ) : null}
-              </section>
+              </aside>
 
-              <section className="dashboard-section">
-                <h2 className="dashboard-heading">My Problem Submissions</h2>
-                {problemRecords.length === 0 ? <div className="admin-state">No problem submissions yet.</div> : null}
-                {problemRecords.length > 0 ? (
-                  <div className="problems-grid">
-                    {problemRecords.map((problem) => (
-                      <article key={problem.id} className="problem-card">
-                        <div className="problem-card-header">
-                          <span className={`admin-status admin-status--${problem.status || 'open'}`}>
-                            {problem.status || 'open'}
-                          </span>
-                          <h2>{problem.title}</h2>
-                        </div>
-                        <div className="problem-meta">
-                          <p><strong>Domain:</strong> {problem.domain}</p>
-                          <p><strong>Difficulty:</strong> {problem.difficulty}</p>
-                          <p><strong>Deadline:</strong> {problem.deadline ? new Date(problem.deadline).toLocaleDateString() : 'N/A'}</p>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                ) : null}
-              </section>
+              <section className="dashboard-content">
+                {activeTab === 'overview' && (
+                  <>
+                    <div className="dashboard-welcome-banner">
+                      <h2>Welcome to your dashboard!</h2>
+                      <p>Submit project proposals, review active problem statements, and track the evaluation progress of your ideas in real-time.</p>
+                    </div>
 
-              <section className="dashboard-section">
-                <h2 className="dashboard-heading">My Solutions</h2>
-                {solutionRecords.length === 0 ? <div className="admin-state">No solution submissions yet.</div> : null}
-                {solutionRecords.length > 0 ? (
-                  <div className="admin-ideas-grid">
-                    {solutionRecords.map((solution) => (
-                      <article key={solution.id} className="admin-idea-card">
-                        <div className="admin-idea-card-header">
-                          <div>
-                            <span className={`admin-status admin-status--${solution.status || 'submitted'}`}>
-                              {solution.status || 'submitted'}
-                            </span>
-                            <h2>{solution.problemTitle || 'Solution Submission'}</h2>
-                          </div>
-                          <span className="admin-idea-id">{solution.id}</span>
+                    <div className="dashboard-overview-grid">
+                      <div className="dashboard-stat-card" onClick={() => setActiveTab('ideas')} style={{ cursor: 'pointer' }}>
+                        <div className="dashboard-stat-icon-wrapper ideas-icon">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/></svg>
                         </div>
-                        <div className="admin-idea-copy">
-                          <p><strong>Summary</strong></p>
-                          <p>{solution.summary}</p>
+                        <div className="dashboard-stat-info">
+                          <h4>My Ideas</h4>
+                          <div className="dashboard-stat-number">{ideaRecords.length}</div>
                         </div>
-                        {solution.reviewNote ? (
-                          <div className="admin-idea-copy">
-                            <p><strong>Review Note</strong></p>
-                            <p>{solution.reviewNote}</p>
-                          </div>
-                        ) : null}
-                      </article>
-                    ))}
+                      </div>
+
+                      <div className="dashboard-stat-card" onClick={() => setActiveTab('problems')} style={{ cursor: 'pointer' }}>
+                        <div className="dashboard-stat-icon-wrapper problems-icon">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        </div>
+                        <div className="dashboard-stat-info">
+                          <h4>Problems</h4>
+                          <div className="dashboard-stat-number">{problemRecords.length}</div>
+                        </div>
+                      </div>
+
+                      <div className="dashboard-stat-card" onClick={() => setActiveTab('solutions')} style={{ cursor: 'pointer' }}>
+                        <div className="dashboard-stat-icon-wrapper solutions-icon">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 11.08 20 9 13 16 9 12 7 14 13 20 22 11.08"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                        </div>
+                        <div className="dashboard-stat-info">
+                          <h4>Solutions</h4>
+                          <div className="dashboard-stat-number">{solutionRecords.length}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <h3 className="dashboard-quick-actions-title">Quick Actions</h3>
+                    <div className="dashboard-quick-actions-grid">
+                      <div className="dashboard-action-card">
+                        <div>
+                          <h3>Submit an Idea</h3>
+                          <p>Pitch your innovative startup idea or technology solution to our incubation center panel.</p>
+                        </div>
+                        <button type="button" className="submit-btn" style={{ width: 'fit-content', margin: 0 }} onClick={() => navigate('/apply')}>
+                          Submit Idea
+                        </button>
+                      </div>
+
+                      <div className="dashboard-action-card">
+                        <div>
+                          <h3>Solve Problems</h3>
+                          <p>Explore real-world challenges listed by organizations and submit your technical solutions.</p>
+                        </div>
+                        <button type="button" className="submit-btn" style={{ width: 'fit-content', margin: 0 }} onClick={() => navigate('/problem-statements')}>
+                          View Problems
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {activeTab === 'ideas' && (
+                  <div className="dashboard-section">
+                    <h2 className="dashboard-heading">My Ideas</h2>
+                    {ideaRecords.length === 0 ? <div className="admin-state">No idea submissions yet.</div> : null}
+                    {ideaRecords.length > 0 ? (
+                      <div className="admin-ideas-grid">
+                        {ideaRecords.map((idea) => (
+                          <article key={idea.id} className="admin-idea-card">
+                            <div className="admin-idea-card-header">
+                              <div>
+                                <span className={`admin-status admin-status--${idea.status || 'pending'}`}>
+                                  {idea.status || 'pending'}
+                                </span>
+                                <h2>{idea.title}</h2>
+                              </div>
+                              <span className="admin-idea-id">{idea.id}</span>
+                            </div>
+                            <div className="admin-idea-copy">
+                              <p><strong>Problem</strong></p>
+                              <p>{idea.problem}</p>
+                            </div>
+                            <div className="admin-idea-copy">
+                              <p><strong>Solution</strong></p>
+                              <p>{idea.solution}</p>
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                    ) : null}
                   </div>
-                ) : null}
+                )}
+
+                {activeTab === 'problems' && (
+                  <div className="dashboard-section">
+                    <h2 className="dashboard-heading">My Problem Submissions</h2>
+                    {problemRecords.length === 0 ? <div className="admin-state">No problem submissions yet.</div> : null}
+                    {problemRecords.length > 0 ? (
+                      <div className="problems-grid">
+                        {problemRecords.map((problem) => (
+                          <article key={problem.id} className="problem-card">
+                            <div className="problem-card-header">
+                              <span className={`admin-status admin-status--${problem.status || 'open'}`}>
+                                {problem.status || 'open'}
+                              </span>
+                              <h2>{problem.title}</h2>
+                            </div>
+                            <div className="problem-meta">
+                              <p><strong>Domain:</strong> {problem.domain}</p>
+                              <p><strong>Difficulty:</strong> {problem.difficulty}</p>
+                              <p><strong>Deadline:</strong> {problem.deadline ? new Date(problem.deadline).toLocaleDateString() : 'N/A'}</p>
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                )}
+
+                {activeTab === 'solutions' && (
+                  <div className="dashboard-section">
+                    <h2 className="dashboard-heading">My Solutions</h2>
+                    {solutionRecords.length === 0 ? <div className="admin-state">No solution submissions yet.</div> : null}
+                    {solutionRecords.length > 0 ? (
+                      <div className="admin-ideas-grid">
+                        {solutionRecords.map((solution) => (
+                          <article key={solution.id} className="admin-idea-card">
+                            <div className="admin-idea-card-header">
+                              <div>
+                                <span className={`admin-status admin-status--${solution.status || 'submitted'}`}>
+                                  {solution.status || 'submitted'}
+                                </span>
+                                <h2>{solution.problemTitle || 'Solution Submission'}</h2>
+                              </div>
+                              <span className="admin-idea-id">{solution.id}</span>
+                            </div>
+                            <div className="admin-idea-copy">
+                              <p><strong>Summary</strong></p>
+                              <p>{solution.summary}</p>
+                            </div>
+                            {solution.reviewNote ? (
+                              <div className="admin-idea-copy">
+                                <p><strong>Review Note</strong></p>
+                                <p>{solution.reviewNote}</p>
+                              </div>
+                            ) : null}
+                          </article>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                )}
               </section>
-            </>
+            </div>
           ) : null}
         </div>
       </main>
@@ -3720,40 +3929,46 @@ function EcosystemPage() {
     </div>
   );
 }
-
 function EventsPage() {
-  const events = [
-    {
-      title: "Collaboration with Curtis Instruments India Pvt Ltd for Corporate Social Responsibility Grants",
-      url: "https://scei.org.in/collaboration-with-curtis-instruments-india-pvt-ltd-for-csr-grants/",
-      image: "https://scei.org.in/wp-content/uploads/2024/04/event-1.jpg"
-    },
-    {
-      title: "SCEI Incubated start-up Guruji AIR collaborated with Western University, Cambodia",
-      url: "https://scei.org.in/scei-incubated-start-up-guruji-air-collaborated-with-western-university-cambodia/",
-      image: "https://scei.org.in/wp-content/uploads/2024/04/event-3.jpg"
-    },
-    {
-      title: "SCEI signed an MOU with CIMP Business Incubation and Innovation Foundation on 11th March 24",
-      url: "https://scei.org.in/scei-signed-an-mou-with-cimp-business-incubation-and-innovation-foundation-on-11th-march-24/",
-      image: "https://scei.org.in/wp-content/uploads/2024/04/event-5.jpg"
-    },
-    {
-      title: "SCEI conducted a session for MSFDA with STLRC on Entrepreneurship & Innovations",
-      url: "https://scei.org.in/scei-conducted-a-session-for-msfda-with-stlrc-on-entrepreneurship-and-innovations/",
-      image: "https://scei.org.in/wp-content/uploads/2024/04/event-6.jpg"
-    },
-    {
-      title: "Durham University delegates visit SCEI: 10th Jan 2024",
-      url: "https://scei.org.in/durham-university-delegates-visit-scei/",
-      image: "https://scei.org.in/wp-content/uploads/2024/04/event-7.jpg"
-    },
-    {
-      title: "SCEI at State Level Event in Nagpur Startup Expo 2023",
-      url: "https://scei.org.in/scei-at-state-level-event-in-nagpur-startup-expo-2023/",
-      image: "https://scei.org.in/wp-content/uploads/2023/12/scei-nagpur-startup-expo-2023.jpg"
-    }
-  ];
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/events')
+      .then(async (response) => {
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(data?.message || 'Unable to load events.');
+        }
+        return data;
+      })
+      .then((data) => {
+        if (cancelled) return;
+        setEvents(Array.isArray(data?.events) ? data.events : []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setError(err.message || 'Failed to fetch events.');
+        setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!selectedEvent) return;
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') setSelectedEvent(null);
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [selectedEvent]);
 
   return (
     <div className="events-page">
@@ -3775,30 +3990,65 @@ function EventsPage() {
       </header>
 
       <main className="events-content container">
-        <div className="events-grid">
-          {events.map((event, index) => (
-            <a 
-              key={index} 
-              href={event.url} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="event-card-link-wrapper"
-            >
-              <div className="event-item-card">
-                <div className="event-item-image-wrap">
-                  <img src={event.image} alt={event.title} className="event-item-img" />
-                </div>
-                <div className="event-item-content">
-                  <h3 className="event-item-title">{event.title}</h3>
-                  <div className="event-item-footer">
-                    <span className="read-more-link">Read Story &rarr;</span>
+        {loading ? (
+          <div className="text-center py-5">
+            <div className="loading-spinner"></div>
+            <p className="mt-2 text-muted">Loading events...</p>
+          </div>
+        ) : error ? (
+          <div className="submission-banner submission-banner--error">{error}</div>
+        ) : events.length === 0 ? (
+          <div className="text-center py-5">
+            <p className="text-muted">No events found.</p>
+          </div>
+        ) : (
+          <div className="events-grid">
+            {events.map((event, index) => (
+              <div 
+                key={event.id || index} 
+                className="event-card-link-wrapper"
+                onClick={() => setSelectedEvent(event)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="event-item-card">
+                  <div className="event-item-image-wrap">
+                    <img src={event.image} alt={event.title} className="event-item-img" />
+                  </div>
+                  <div className="event-item-content">
+                    <h3 className="event-item-title">{event.title}</h3>
+                    <div className="event-item-footer">
+                      <span className="read-more-link">Read Story &rarr;</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </a>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </main>
+
+      {selectedEvent && (
+        <div className="event-modal-overlay" role="presentation" onClick={() => setSelectedEvent(null)}>
+          <div className="event-modal-card" onClick={(e) => e.stopPropagation()}>
+            <button 
+              type="button" 
+              className="event-modal-close-btn" 
+              onClick={() => setSelectedEvent(null)}
+              aria-label="Close details"
+            >
+              &times;
+            </button>
+            <div className="event-modal-image-wrap">
+              <img src={selectedEvent.image} alt={selectedEvent.title} className="event-modal-img" />
+            </div>
+            <div className="event-modal-body">
+              <span className="event-modal-tag">{selectedEvent.tag}</span>
+              <h2 className="event-modal-title">{selectedEvent.title}</h2>
+              <p className="event-modal-description">{selectedEvent.description}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -3818,6 +4068,17 @@ function NotFoundPage() {
 }
 
 function TeamPage() {
+  const [selectedMember, setSelectedMember] = useState(null);
+
+  useEffect(() => {
+    if (!selectedMember) return;
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') setSelectedMember(null);
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [selectedMember]);
+
   return (
     <>
       <header className="page-header team-page-header">
@@ -3831,18 +4092,53 @@ function TeamPage() {
         <div className="container">
           <div className="team-grid">
             {siteData.teamMembers.map((member) => (
-              <article key={member.name} className="team-member-card">
-                <div className="team-member-photo-wrap">
-                  <img src={member.photo} alt={member.name} className="team-member-photo" />
-                </div>
-                <h3>{member.name}</h3>
-                <p><strong>{member.role}</strong></p>
-                {member.affiliation && <p style={{ fontSize: '0.85rem', color: 'var(--clr-text-muted)', marginTop: '4px' }}>{member.affiliation}</p>}
-              </article>
+              <button
+                key={member.name}
+                type="button"
+                className="team-member-card-wrapper"
+                style={{ background: 'none', border: 'none', padding: 0, width: '100%', textAlign: 'left', cursor: 'pointer' }}
+                onClick={() => setSelectedMember(member)}
+              >
+                <article className="team-member-card">
+                  <div className="team-member-photo-wrap">
+                    <img src={member.photo} alt={member.name} className="team-member-photo" />
+                  </div>
+                  <h3>{member.name}</h3>
+                  <p><strong>{member.role}</strong></p>
+                  {member.affiliation && <p style={{ fontSize: '0.85rem', color: 'var(--clr-text-muted)', marginTop: '4px' }}>{member.affiliation}</p>}
+                </article>
+              </button>
             ))}
           </div>
         </div>
       </main>
+
+      {selectedMember && (
+        <div className="director-modal-overlay" onClick={() => setSelectedMember(null)} role="presentation">
+          <div className="director-modal-card" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={`Message from ${selectedMember.name}`}>
+            <button className="director-modal-close" onClick={() => setSelectedMember(null)} aria-label="Close modal">
+              &times;
+            </button>
+            <div className="director-modal-content">
+              <div className="director-modal-left">
+                <div className="director-modal-photo-wrap-rect">
+                  <img src={selectedMember.photo} alt={selectedMember.name} className="director-modal-photo-rect" />
+                </div>
+              </div>
+              <div className="director-modal-right">
+                <h3 className="director-modal-name">{selectedMember.name}</h3>
+                <h4 className="director-modal-subtitle">
+                  {selectedMember.role}<br />
+                  {selectedMember.affiliation}
+                </h4>
+                <div className="director-modal-message-wrap">
+                  <p className="director-modal-message-text">{selectedMember.message || 'No additional message provided.'}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
@@ -4968,7 +5264,7 @@ function AdminIdeasPage() {
     featured: false
   });
 
-  const [activeManagementSection, setActiveManagementSection] = useState('ideas');
+  const [activeManagementSection, setActiveManagementSection] = useState('overview');
   const [ideas, setIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -4996,6 +5292,25 @@ function AdminIdeasPage() {
   const [deletingProjectId, setDeletingProjectId] = useState('');
   const [thumbnailUploadLabel, setThumbnailUploadLabel] = useState('No file selected');
   const projectEditorRef = useRef(null);
+
+  const createEmptyEventForm = () => ({
+    title: '',
+    tag: '',
+    image: '',
+    description: '',
+    featured: false
+  });
+
+  const [adminEvents, setAdminEvents] = useState([]);
+  const [adminEventsLoading, setAdminEventsLoading] = useState(true);
+  const [adminEventsError, setAdminEventsError] = useState('');
+  const [eventSearchQuery, setEventSearchQuery] = useState('');
+  const [eventForm, setEventForm] = useState(createEmptyEventForm);
+  const [editingEventId, setEditingEventId] = useState('');
+  const [savingEvent, setSavingEvent] = useState(false);
+  const [deletingEventId, setDeletingEventId] = useState('');
+  const [eventImageUploadLabel, setEventImageUploadLabel] = useState('No file selected');
+
   const [adminEmail, setAdminEmail] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [adminToken, setAdminToken] = useState('');
@@ -5021,12 +5336,14 @@ function AdminIdeasPage() {
         setProjects([]);
         setProblems([]);
         setSolutions([]);
+        setAdminEvents([]);
         setIsAdminSolutionsModalOpen(false);
         setSelectedProblemForSolutions(null);
         setLoading(false);
         setProjectsLoading(false);
         setProblemsLoading(false);
         setSolutionsLoading(false);
+        setAdminEventsLoading(false);
         return;
       }
 
@@ -5315,6 +5632,72 @@ function AdminIdeasPage() {
     };
   }, [loadSolutions]);
 
+  const loadEvents = useMemo(() => {
+    return () => {
+      let cancelled = false;
+
+      if (!isAuthorized || !adminToken) {
+        setAdminEventsLoading(false);
+        return () => {
+          cancelled = true;
+        };
+      }
+
+      setAdminEventsLoading(true);
+      resolveAdminToken()
+        .then((resolvedToken) =>
+          fetch('/api/admin-events', {
+            headers: {
+              Authorization: `Bearer ${resolvedToken}`
+            }
+          })
+        )
+        .then(async (response) => {
+          const data = await response.json().catch(() => ({}));
+
+          if (!response.ok) {
+            throw new Error(data?.message || 'Unable to load events.');
+          }
+
+          return data;
+        })
+        .then((data) => {
+          if (cancelled) {
+            return;
+          }
+
+          setAdminEvents(Array.isArray(data?.events) ? data.events : []);
+          setAdminEventsError('');
+        })
+        .catch((loadError) => {
+          if (cancelled) {
+            return;
+          }
+
+          setAdminEventsError(loadError.message || 'Unable to load events.');
+        })
+        .finally(() => {
+          if (!cancelled) {
+            setAdminEventsLoading(false);
+          }
+        });
+
+      return () => {
+        cancelled = true;
+      };
+    };
+  }, [adminToken, isAuthorized]);
+
+  useEffect(() => {
+    const cancelLoad = loadEvents();
+
+    return () => {
+      if (typeof cancelLoad === 'function') {
+        cancelLoad();
+      }
+    };
+  }, [loadEvents]);
+
   const updateIdeaStatus = (ideaId, nextStatus) => {
     if (updatingIdeaId || !adminToken) {
       return;
@@ -5553,6 +5936,187 @@ function AdminIdeasPage() {
       });
   };
 
+  const updateEventFormField = (field, value) => {
+    setEventForm((prev) => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const resetEventForm = () => {
+    setEventForm(createEmptyEventForm());
+    setEditingEventId('');
+    setAdminEventsError('');
+    setEventImageUploadLabel('No file selected');
+  };
+
+  const handleEditEvent = (eventData) => {
+    setEditingEventId(eventData.id);
+    setEventForm({
+      title: eventData.title || '',
+      tag: eventData.tag || '',
+      image: eventData.image || '',
+      description: eventData.description || '',
+      featured: !!eventData.featured
+    });
+    setAdminEventsError('');
+    setEventImageUploadLabel(eventData.image && eventData.image.startsWith('data:') ? 'Uploaded image' : 'Image URL');
+    if (projectEditorRef.current) {
+      projectEditorRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleEventImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      setAdminEventsError('Only image files are allowed.');
+      return;
+    }
+
+    // Keep base64 image small enough for Firestore document limits.
+    if (file.size > 450 * 1024) {
+      setAdminEventsError('Event photo is too large. Please use an image smaller than 450 KB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === 'string' ? reader.result : '';
+      if (!result) {
+        setAdminEventsError('Unable to read image file. Please try another image.');
+        return;
+      }
+
+      updateEventFormField('image', result);
+      setEventImageUploadLabel(file.name);
+      setAdminEventsError('');
+    };
+    reader.onerror = () => {
+      setAdminEventsError('Unable to read image file. Please try another image.');
+    };
+
+    reader.readAsDataURL(file);
+  };
+
+  const saveEvent = (event) => {
+    event.preventDefault();
+
+    if (savingEvent || !adminToken) {
+      return;
+    }
+
+    const payload = {
+      title: eventForm.title.trim(),
+      tag: eventForm.tag.trim(),
+      image: eventForm.image.trim(),
+      description: eventForm.description.trim(),
+      featured: !!eventForm.featured
+    };
+
+    if (!payload.title || !payload.tag || !payload.image || !payload.description) {
+      setAdminEventsError('Title, tag, image, and description are required.');
+      return;
+    }
+
+    setSavingEvent(true);
+    setAdminEventsError('');
+
+    const endpoint = editingEventId ? '/api/update-event' : '/api/admin-events';
+    const bodyPayload = editingEventId ? { ...payload, id: editingEventId } : payload;
+
+    resolveAdminToken()
+      .then((resolvedToken) =>
+        fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${resolvedToken}`
+          },
+          body: JSON.stringify(bodyPayload)
+        })
+      )
+      .then(async (response) => {
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(data?.message || 'Unable to save event.');
+        }
+        return data;
+      })
+      .then((data) => {
+        const savedEvent = data?.event;
+        if (!savedEvent) {
+          return;
+        }
+
+        if (editingEventId) {
+          setAdminEvents((currentEvents) =>
+            currentEvents.map((evt) => (evt.id === savedEvent.id ? savedEvent : evt))
+          );
+        } else {
+          setAdminEvents((currentEvents) => [savedEvent, ...currentEvents]);
+        }
+
+        resetEventForm();
+      })
+      .catch((saveError) => {
+        setAdminEventsError(saveError.message || 'Unable to save event.');
+      })
+      .finally(() => {
+        setSavingEvent(false);
+      });
+  };
+
+  const removeEvent = (eventId) => {
+    if (deletingEventId || !adminToken) {
+      return;
+    }
+
+    const shouldDelete = window.confirm('Delete this event?');
+    if (!shouldDelete) {
+      return;
+    }
+
+    setDeletingEventId(eventId);
+    setAdminEventsError('');
+
+    resolveAdminToken()
+      .then((resolvedToken) =>
+        fetch('/api/delete-event', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${resolvedToken}`
+          },
+          body: JSON.stringify({ id: eventId })
+        })
+      )
+      .then(async (response) => {
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(data?.message || 'Unable to delete event.');
+        }
+
+        return data;
+      })
+      .then(() => {
+        setAdminEvents((currentEvents) => currentEvents.filter((evt) => evt.id !== eventId));
+        if (editingEventId === eventId) {
+          resetEventForm();
+        }
+      })
+      .catch((deleteError) => {
+        setAdminEventsError(deleteError.message || 'Unable to delete event.');
+      })
+      .finally(() => {
+        setDeletingEventId('');
+      });
+  };
+
   const updateAdminProblemStatus = (problemId, status) => {
     if (!problemId || updatingProblemId || !adminToken) {
       return;
@@ -5759,6 +6323,25 @@ function AdminIdeasPage() {
     return searchableText.includes(normalizedProblemSearch);
   });
 
+  const normalizedEventSearch = eventSearchQuery.trim().toLowerCase();
+  const filteredEvents = adminEvents.filter((evt) => {
+    if (!normalizedEventSearch) {
+      return true;
+    }
+
+    const searchableText = [
+      evt.id,
+      evt.title,
+      evt.tag,
+      evt.description
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
+
+    return searchableText.includes(normalizedEventSearch);
+  });
+
   const solutionsByProblemId = useMemo(() => {
     return solutions.reduce((accumulator, solution) => {
       const key = String(solution.problemId || '').trim();
@@ -5818,19 +6401,33 @@ function AdminIdeasPage() {
 
   return (
     <>
-      <header className="page-header admin-page-header">
-        <div className="container">
-          <h1>Submitted Ideas</h1>
-          <p>Review the latest student idea pitches and their current status.</p>
+      <header className="page-header admin-page-header submitted-ideas-page-header">
+        <div className={isAuthorized ? "admin-dashboard-container" : "container"}>
+          <h1>
+            {!isAuthorized && 'Admin Access'}
+            {isAuthorized && activeManagementSection === 'overview' && 'Admin Portal'}
+            {isAuthorized && activeManagementSection === 'ideas' && 'Submitted Ideas'}
+            {isAuthorized && activeManagementSection === 'projects' && 'Projects Portfolio'}
+            {isAuthorized && activeManagementSection === 'problems' && 'Problem Statements'}
+            {isAuthorized && activeManagementSection === 'events' && 'Incubator Events'}
+          </h1>
+          <p>
+            {!isAuthorized && 'Sign in with your Firebase admin account to manage idea submissions and project cards.'}
+            {isAuthorized && activeManagementSection === 'overview' && 'Manage and oversee all student submissions and projects.'}
+            {isAuthorized && activeManagementSection === 'ideas' && 'Review the latest student idea pitches and their current status.'}
+            {isAuthorized && activeManagementSection === 'projects' && 'Manage and update featured projects showcased on the incubator homepage.'}
+            {isAuthorized && activeManagementSection === 'problems' && 'Monitor active corporate/educational challenges and solve submissions.'}
+            {isAuthorized && activeManagementSection === 'events' && 'Add, edit, or remove cohort events, CSR details, partnerships, and visits.'}
+          </p>
         </div>
       </header>
 
       <main className="admin-main">
-        <div className="container">
+        <div className={isAuthorized ? "admin-dashboard-container" : "container"}>
           {!isAuthorized ? (
             <div className="admin-auth-card">
               <h2>Admin Access</h2>
-              <p>Sign in with your Firebase admin account to manage idea submissions and project cards.</p>
+              <p>Please sign in with your credentials to access the management portal.</p>
 
               {authError ? <div className="submission-banner submission-banner--error">{authError}</div> : null}
 
@@ -5891,140 +6488,271 @@ function AdminIdeasPage() {
             </div>
           ) : null}
 
-          {isAuthorized ? (
-            <div className="admin-auth-actions">
-              <button
-                type="button"
-                className="admin-signout-btn"
-                onClick={() => {
-                  if (firebaseAuth) {
-                    signOut(firebaseAuth);
-                  }
-                }}
-              >
-                Sign out
-              </button>
-            </div>
-          ) : null}
-
           {isAuthorized && loading ? <div className="admin-state">Loading ideas...</div> : null}
           {isAuthorized && error ? <div className="submission-banner submission-banner--error admin-state">{error}</div> : null}
 
           {isAuthorized && !loading && !error ? (
-            <div className="apply-section-tabs" role="tablist" aria-label="Admin management sections">
-              {managementSections.map((section) => (
-                <button
-                  key={section.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={activeManagementSection === section.id}
-                  className={`apply-section-tab${activeManagementSection === section.id ? ' active' : ''}`}
-                  onClick={() => setActiveManagementSection(section.id)}
-                >
-                  {section.label}
-                </button>
-              ))}
-            </div>
-          ) : null}
-
-          {isAuthorized && activeManagementSection === 'ideas' && !loading && !error ? (
-            <>
-              <div className="apply-section-tabs" role="tablist" aria-label="Idea status sections">
-                {ideaStatusSections.map((section) => (
-                  <button
-                    key={section.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={activeAdminSection === section.id}
-                    className={`apply-section-tab${activeAdminSection === section.id ? ' active' : ''}`}
-                    onClick={() => setActiveAdminSection(section.id)}
-                  >
-                    {section.label} ({ideaCounts[section.id] || 0})
-                  </button>
-                ))}
-              </div>
-
-              <div className="admin-ideas-toolbar">
-                <input
-                  type="search"
-                  className="form-control admin-search-input"
-                  placeholder="Search requests by ID, title, name, domain, problem, or solution"
-                  value={adminSearchQuery}
-                  onChange={(event) => setAdminSearchQuery(event.target.value)}
-                  aria-label="Search project requests"
-                />
-              </div>
-            </>
-          ) : null}
-
-          {isAuthorized && activeManagementSection === 'ideas' && !loading && !error && filteredIdeas.length === 0 ? (
-            <div className="admin-state">
-              {normalizedSearch
-                ? `No ${activeAdminSection} ideas match "${adminSearchQuery}".`
-                : `No ${activeAdminSection} ideas found.`}
-            </div>
-          ) : null}
-
-          {isAuthorized && activeManagementSection === 'ideas' && !loading && !error && filteredIdeas.length > 0 ? (
-            <div className="admin-ideas-grid">
-              {filteredIdeas.map((idea) => (
-                <article key={idea.id} className="admin-idea-card">
-                  <div className="admin-idea-card-header">
-                    <div>
-                      <span className={`admin-status admin-status--${idea.status || 'pending'}`}>
-                        {idea.status || 'pending'}
+            <div className="dashboard-layout">
+              <aside className="dashboard-sidebar">
+                <div className="dashboard-sidebar-profile">
+                  <h3>Admin Portal</h3>
+                  <p>Management Console</p>
+                </div>
+                
+                <ul className="dashboard-sidebar-menu">
+                  <li className={`dashboard-sidebar-item${activeManagementSection === 'overview' ? ' active' : ''}`}>
+                    <button type="button" onClick={() => setActiveManagementSection('overview')}>
+                      <span className="dashboard-sidebar-item-label">
+                        <span className="dashboard-sidebar-item-icon">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+                        </span>
+                        Overview
                       </span>
-                      <h2>{idea.title}</h2>
+                    </button>
+                  </li>
+                  <li className={`dashboard-sidebar-item${activeManagementSection === 'ideas' ? ' active' : ''}`}>
+                    <button type="button" onClick={() => setActiveManagementSection('ideas')}>
+                      <span className="dashboard-sidebar-item-label">
+                        <span className="dashboard-sidebar-item-icon">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/></svg>
+                        </span>
+                        Ideas Pitch
+                      </span>
+                      <span className="dashboard-badge">{ideas.filter(i => (i.status || 'pending').toLowerCase() === 'pending').length}</span>
+                    </button>
+                  </li>
+                  <li className={`dashboard-sidebar-item${activeManagementSection === 'projects' ? ' active' : ''}`}>
+                    <button type="button" onClick={() => setActiveManagementSection('projects')}>
+                      <span className="dashboard-sidebar-item-label">
+                        <span className="dashboard-sidebar-item-icon">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </span>
+                        Projects
+                      </span>
+                      <span className="dashboard-badge">{projects.length}</span>
+                    </button>
+                  </li>
+                  <li className={`dashboard-sidebar-item${activeManagementSection === 'problems' ? ' active' : ''}`}>
+                    <button type="button" onClick={() => setActiveManagementSection('problems')}>
+                      <span className="dashboard-sidebar-item-label">
+                        <span className="dashboard-sidebar-item-icon">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        </span>
+                        Problems
+                      </span>
+                      <span className="dashboard-badge">{problems.length}</span>
+                    </button>
+                  </li>
+                  <li className={`dashboard-sidebar-item${activeManagementSection === 'events' ? ' active' : ''}`}>
+                    <button type="button" onClick={() => setActiveManagementSection('events')}>
+                      <span className="dashboard-sidebar-item-label">
+                        <span className="dashboard-sidebar-item-icon">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </span>
+                        Events
+                      </span>
+                      <span className="dashboard-badge">{adminEvents.length}</span>
+                    </button>
+                  </li>
+                </ul>
+
+                <div className="dashboard-sidebar-footer">
+                  <button
+                    type="button"
+                    className="admin-signout-btn"
+                    style={{ width: '100%' }}
+                    onClick={() => {
+                      if (firebaseAuth) {
+                        signOut(firebaseAuth);
+                      }
+                    }}
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </aside>
+
+              <section className="dashboard-content">
+                {activeManagementSection === 'overview' && (
+                  <>
+                    <div className="dashboard-welcome-banner">
+                      <h2>Welcome to Admin Control</h2>
+                      <p>Incubator administration dashboard. Oversee system status, review idea submissions, update active projects, and list student problems.</p>
                     </div>
-                    <span className="admin-idea-id">{idea.id}</span>
-                  </div>
 
-                  <div className="admin-idea-meta">
-                    <p><strong>Name:</strong> {idea.name}</p>
-                    <p><strong>Email:</strong> {idea.email}</p>
-                    <p><strong>Domain:</strong> {idea.domain}</p>
-                    <p><strong>Submitted:</strong> {idea.submittedAt ? new Date(idea.submittedAt).toLocaleString() : 'N/A'}</p>
-                  </div>
+                    <div className="dashboard-overview-grid">
+                      <div className="dashboard-stat-card" onClick={() => setActiveManagementSection('ideas')} style={{ cursor: 'pointer' }}>
+                        <div className="dashboard-stat-icon-wrapper ideas-icon">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/></svg>
+                        </div>
+                        <div className="dashboard-stat-info">
+                          <h4>Pending Ideas</h4>
+                          <div className="dashboard-stat-number">{ideaCounts.pending}</div>
+                        </div>
+                      </div>
 
-                  <div className="admin-idea-copy">
-                    <p><strong>Problem</strong></p>
-                    <p>{idea.problem}</p>
-                  </div>
+                      <div className="dashboard-stat-card" onClick={() => setActiveManagementSection('projects')} style={{ cursor: 'pointer' }}>
+                        <div className="dashboard-stat-icon-wrapper solutions-icon">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <div className="dashboard-stat-info">
+                          <h4>Active Projects</h4>
+                          <div className="dashboard-stat-number">{projects.length}</div>
+                        </div>
+                      </div>
 
-                  <div className="admin-idea-copy">
-                    <p><strong>Solution</strong></p>
-                    <p>{idea.solution}</p>
-                  </div>
+                      <div className="dashboard-stat-card" onClick={() => setActiveManagementSection('problems')} style={{ cursor: 'pointer' }}>
+                        <div className="dashboard-stat-icon-wrapper problems-icon">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        </div>
+                        <div className="dashboard-stat-info">
+                          <h4>Total Problems</h4>
+                          <div className="dashboard-stat-number">{problems.length}</div>
+                        </div>
+                      </div>
 
-                  {(idea.status || 'pending').toLowerCase() === 'pending' ? (
-                    <div className="admin-idea-actions">
-                      <button
-                        type="button"
-                        className="admin-action-btn admin-action-btn--approve"
-                        disabled={updatingIdeaId === idea.id}
-                        onClick={() => updateIdeaStatus(idea.id, 'approved')}
-                      >
-                        {updatingIdeaId === idea.id ? 'Updating...' : 'Approve'}
-                      </button>
-                      <button
-                        type="button"
-                        className="admin-action-btn admin-action-btn--reject"
-                        disabled={updatingIdeaId === idea.id}
-                        onClick={() => updateIdeaStatus(idea.id, 'rejected')}
-                      >
-                        {updatingIdeaId === idea.id ? 'Updating...' : 'Reject'}
-                      </button>
+                      <div className="dashboard-stat-card" onClick={() => setActiveManagementSection('events')} style={{ cursor: 'pointer' }}>
+                        <div className="dashboard-stat-icon-wrapper active-challenges-icon" style={{ background: 'rgba(31, 125, 50, 0.08)', color: 'var(--clr-primary)' }}>
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                        <div className="dashboard-stat-info">
+                          <h4>Manage Events</h4>
+                          <div className="dashboard-stat-number">{adminEvents.length}</div>
+                        </div>
+                      </div>
                     </div>
-                  ) : (
-                    <div className="admin-state">This idea has already been {(idea.status || 'reviewed').toLowerCase()}.</div>
-                  )}
-                </article>
-              ))}
-            </div>
-          ) : null}
 
-          {isAuthorized && activeManagementSection === 'projects' ? (
-            <section className="admin-projects-wrap">
+                    <h3 className="dashboard-quick-actions-title">System Overview</h3>
+                    <div className="dashboard-quick-actions-grid" style={{ marginBottom: '20px' }}>
+                      <div className="dashboard-action-card">
+                        <div>
+                          <h3>Idea Pitches</h3>
+                          <p>Review and evaluate student startup idea pitches. Approve submissions to shortlist them or reject them with feedback.</p>
+                        </div>
+                        <button type="button" className="submit-btn" style={{ width: 'fit-content', margin: 0 }} onClick={() => setActiveManagementSection('ideas')}>
+                          Review Ideas
+                        </button>
+                      </div>
+
+                      <div className="dashboard-action-card">
+                        <div>
+                          <h3>Manage Projects</h3>
+                          <p>Add, edit, or remove project cards showcased on the incubator home page and all projects archive.</p>
+                        </div>
+                        <button type="button" className="submit-btn" style={{ width: 'fit-content', margin: 0 }} onClick={() => setActiveManagementSection('projects')}>
+                          Manage Portfolio
+                        </button>
+                      </div>
+
+                      <div className="dashboard-action-card">
+                        <div>
+                          <h3>Incubator Events</h3>
+                          <p>Control events listing, change headlines, customize tags, descriptions, details, images, and add/edit/delete events.</p>
+                        </div>
+                        <button type="button" className="submit-btn" style={{ width: 'fit-content', margin: 0 }} onClick={() => setActiveManagementSection('events')}>
+                          Manage Events
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {activeManagementSection === 'ideas' && (
+                  <>
+                    <div className="apply-section-tabs" role="tablist" aria-label="Idea status sections">
+                      {ideaStatusSections.map((section) => (
+                        <button
+                          key={section.id}
+                          type="button"
+                          role="tab"
+                          aria-selected={activeAdminSection === section.id}
+                          className={`apply-section-tab${activeAdminSection === section.id ? ' active' : ''}`}
+                          onClick={() => setActiveAdminSection(section.id)}
+                        >
+                          {section.label} ({ideaCounts[section.id] || 0})
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="admin-ideas-toolbar">
+                      <input
+                        type="search"
+                        className="form-control admin-search-input"
+                        placeholder="Search requests by ID, title, name, domain, problem, or solution"
+                        value={adminSearchQuery}
+                        onChange={(event) => setAdminSearchQuery(event.target.value)}
+                        aria-label="Search project requests"
+                      />
+                    </div>
+
+                    {filteredIdeas.length === 0 ? (
+                      <div className="admin-state">
+                        {normalizedSearch
+                          ? `No ${activeAdminSection} ideas match "${adminSearchQuery}".`
+                          : `No ${activeAdminSection} ideas found.`}
+                      </div>
+                    ) : (
+                      <div className="admin-ideas-grid">
+                        {filteredIdeas.map((idea) => (
+                          <article key={idea.id} className="admin-idea-card">
+                            <div className="admin-idea-card-header">
+                              <div>
+                                <span className={`admin-status admin-status--${idea.status || 'pending'}`}>
+                                  {idea.status || 'pending'}
+                                </span>
+                                <h2>{idea.title}</h2>
+                              </div>
+                              <span className="admin-idea-id">{idea.id}</span>
+                            </div>
+
+                            <div className="admin-idea-meta">
+                              <p><strong>Name:</strong> {idea.name}</p>
+                              <p><strong>Email:</strong> {idea.email}</p>
+                              <p><strong>Domain:</strong> {idea.domain}</p>
+                              <p><strong>Submitted:</strong> {idea.submittedAt ? new Date(idea.submittedAt).toLocaleString() : 'N/A'}</p>
+                            </div>
+
+                            <div className="admin-idea-copy">
+                              <p><strong>Problem</strong></p>
+                              <p>{idea.problem}</p>
+                            </div>
+
+                            <div className="admin-idea-copy">
+                              <p><strong>Solution</strong></p>
+                              <p>{idea.solution}</p>
+                            </div>
+
+                            {(idea.status || 'pending').toLowerCase() === 'pending' ? (
+                              <div className="admin-idea-actions">
+                                <button
+                                  type="button"
+                                  className="admin-action-btn admin-action-btn--approve"
+                                  disabled={updatingIdeaId === idea.id}
+                                  onClick={() => updateIdeaStatus(idea.id, 'approved')}
+                                >
+                                  {updatingIdeaId === idea.id ? 'Updating...' : 'Approve'}
+                                </button>
+                                <button
+                                  type="button"
+                                  className="admin-action-btn admin-action-btn--reject"
+                                  disabled={updatingIdeaId === idea.id}
+                                  onClick={() => updateIdeaStatus(idea.id, 'rejected')}
+                                >
+                                  {updatingIdeaId === idea.id ? 'Updating...' : 'Reject'}
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="admin-state">This idea has already been {(idea.status || 'reviewed').toLowerCase()}.</div>
+                            )}
+                          </article>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {activeManagementSection === 'projects' && (
+            <section className="admin-projects-wrap" style={{ marginTop: 0 }}>
               <div ref={projectEditorRef} className="admin-auth-card admin-project-editor">
                 <h2>{editingProjectId ? 'Edit Project Card' : 'Add New Project Card'}</h2>
                 <p>These cards appear on the home Projects section and the All Projects page.</p>
@@ -6240,10 +6968,10 @@ function AdminIdeasPage() {
                 </div>
               ) : null}
             </section>
-          ) : null}
+                )}
 
-          {isAuthorized && activeManagementSection === 'problems' ? (
-            <section className="admin-projects-wrap">
+                {activeManagementSection === 'problems' && (
+            <section className="admin-projects-wrap" style={{ marginTop: 0 }}>
               <div className="admin-ideas-toolbar">
                 <input
                   type="search"
@@ -6350,6 +7078,198 @@ function AdminIdeasPage() {
                 </div>
               ) : null}
             </section>
+                )}
+
+                {activeManagementSection === 'events' && (
+                  <section className="admin-projects-wrap" style={{ marginTop: 0 }}>
+                    {/* Add Event Form Section */}
+                    <div ref={projectEditorRef} className="admin-project-editor shadow-sm p-4 mb-4 bg-white rounded border">
+                      <h3 className="section-title-serif mb-3">
+                        {editingEventId ? 'Edit Event Details' : 'Add New Event'}
+                      </h3>
+                      
+                      {adminEventsError ? (
+                        <div className="submission-banner submission-banner--error mb-3">{adminEventsError}</div>
+                      ) : null}
+
+                      <form onSubmit={saveEvent} className="admin-project-form">
+                        <div className="form-group mb-3">
+                          <label className="form-label" htmlFor="eventTitle">Event Headline / Title</label>
+                          <input
+                            type="text"
+                            id="eventTitle"
+                            className="form-control"
+                            placeholder="e.g. Collaboration with Curtis Instruments India Pvt Ltd"
+                            value={eventForm.title}
+                            onChange={(e) => updateEventFormField('title', e.target.value)}
+                            required
+                          />
+                        </div>
+
+                        <div className="form-row mb-3" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                          <div className="form-group">
+                            <label className="form-label" htmlFor="eventTag">Tag / Category</label>
+                            <input
+                              type="text"
+                              id="eventTag"
+                              className="form-control"
+                              placeholder="e.g. CSR Grant Partnership"
+                              value={eventForm.tag}
+                              onChange={(e) => updateEventFormField('tag', e.target.value)}
+                              required
+                            />
+                          </div>
+                          
+                          <div className="form-group">
+                            <label className="form-label" htmlFor="eventImageUpload">Upload Event Photo</label>
+                            <input
+                              type="file"
+                              id="eventImageUpload"
+                              accept="image/*"
+                              className="form-control"
+                              onChange={handleEventImageUpload}
+                              required={!editingEventId}
+                            />
+                            <p className="proposal-hint">{eventImageUploadLabel}</p>
+                            
+                            {eventForm.image ? (
+                              <div className="mt-2">
+                                <img src={eventForm.image} alt="Event preview" className="admin-project-thumb" style={{ maxHeight: '120px', borderRadius: '8px', border: '1px solid #ddd' }} />
+                              </div>
+                            ) : null}
+                          </div>
+                        </div>
+
+                        <div className="form-group mb-3">
+                          <label className="form-label" htmlFor="eventDescription">Description (Read More Section content)</label>
+                          <textarea
+                            id="eventDescription"
+                            className="form-control"
+                            rows="5"
+                            placeholder="Detailed description of what occurred, partnerships formed, start-up details, or expo highlights..."
+                            value={eventForm.description}
+                            onChange={(e) => updateEventFormField('description', e.target.value)}
+                            required
+                          ></textarea>
+                        </div>
+
+                        <div className="form-group mb-3">
+                          <label className="admin-checkbox">
+                            <input
+                              type="checkbox"
+                              checked={eventForm.featured}
+                              onChange={(e) => updateEventFormField('featured', e.target.checked)}
+                            />
+                            Feature this event on Homepage showcase
+                          </label>
+                        </div>
+
+                        <div className="form-actions d-flex gap-2">
+                          <button
+                            type="submit"
+                            className="submit-btn"
+                            style={{ margin: 0 }}
+                            disabled={savingEvent}
+                          >
+                            {savingEvent ? 'Saving...' : editingEventId ? 'Update Event' : 'Add Event'}
+                          </button>
+                          
+                          {editingEventId || eventForm.title || eventForm.description ? (
+                            <button
+                              type="button"
+                              className="admin-action-btn"
+                              style={{ border: '1px solid #ccc', margin: 0 }}
+                              onClick={resetEventForm}
+                            >
+                              Cancel / Clear
+                            </button>
+                          ) : null}
+                        </div>
+                      </form>
+                    </div>
+
+                    {/* Toolbar search */}
+                    <div className="admin-ideas-toolbar">
+                      <input
+                        type="search"
+                        className="form-control admin-search-input"
+                        placeholder="Search events by headline, tag, or description"
+                        value={eventSearchQuery}
+                        onChange={(e) => setEventSearchQuery(e.target.value)}
+                        aria-label="Search events"
+                      />
+                    </div>
+
+                    {adminEventsLoading ? <div className="admin-state">Loading events...</div> : null}
+                    {!adminEventsLoading && adminEventsError ? <div className="submission-banner submission-banner--error admin-state">{adminEventsError}</div> : null}
+
+                    {!adminEventsLoading && !adminEventsError && filteredEvents.length === 0 ? (
+                      <div className="admin-state">
+                        {eventSearchQuery ? `No events match "${eventSearchQuery}".` : 'No events found.'}
+                      </div>
+                    ) : null}
+
+                    {!adminEventsLoading && !adminEventsError && filteredEvents.length > 0 ? (
+                      <div className="admin-ideas-grid">
+                        {filteredEvents.map((evt) => (
+                          <article key={evt.id} className="admin-idea-card">
+                            <div className="admin-idea-card-header">
+                              <div>
+                                <div className="d-flex gap-2 align-items-center mb-1" style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
+                                  <span className="admin-status admin-status--open" style={{ margin: 0 }}>{evt.tag}</span>
+                                  <span className={`admin-status ${evt.featured ? 'admin-status--approved' : 'admin-status--open'}`} style={{ margin: 0 }}>
+                                    {evt.featured ? 'featured' : 'standard'}
+                                  </span>
+                                </div>
+                                <h2>{evt.title}</h2>
+                              </div>
+                              <span className="admin-idea-id">{evt.id}</span>
+                            </div>
+
+                            <div className="admin-idea-copy">
+                              <p><strong>Description</strong></p>
+                              <p>{evt.description}</p>
+                            </div>
+
+                            <div className="admin-idea-copy">
+                              {evt.image ? (
+                                <img
+                                  src={evt.image}
+                                  alt={evt.title}
+                                  className="admin-project-thumb"
+                                  style={{ maxHeight: '160px', objectFit: 'cover', borderRadius: '8px' }}
+                                />
+                              ) : (
+                                <p className="text-muted">No photo URL set.</p>
+                              )}
+                            </div>
+
+                            <div className="admin-idea-actions">
+                              <button
+                                type="button"
+                                className="admin-action-btn admin-action-btn--approve"
+                                onClick={() => handleEditEvent(evt)}
+                                disabled={deletingEventId === evt.id}
+                              >
+                                {editingEventId === evt.id ? 'Editing...' : 'Edit'}
+                              </button>
+                              <button
+                                type="button"
+                                className="admin-action-btn admin-action-btn--reject"
+                                onClick={() => removeEvent(evt.id)}
+                                disabled={deletingEventId === evt.id}
+                              >
+                                {deletingEventId === evt.id ? 'Deleting...' : 'Delete'}
+                              </button>
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                    ) : null}
+                  </section>
+                )}
+              </section>
+            </div>
           ) : null}
 
           {isAuthorized && isAdminSolutionsModalOpen && selectedProblemForSolutions ? (

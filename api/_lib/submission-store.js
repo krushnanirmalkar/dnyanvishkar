@@ -345,3 +345,66 @@ export async function deleteProject(id) {
     withFirestoreErrorMessage(error);
   }
 }
+
+const EVENT_COLLECTION = 'events';
+
+export async function getEvents() {
+  try {
+    const db = getAdminDb();
+    const snapshot = await db.collection(EVENT_COLLECTION).get();
+    return normalizeCollectionSnapshot(snapshot);
+  } catch (error) {
+    withFirestoreErrorMessage(error);
+  }
+}
+
+export async function addEvent(event) {
+  try {
+    const db = getAdminDb();
+    await db.collection(EVENT_COLLECTION).doc(event.id).set(event);
+    return event;
+  } catch (error) {
+    withFirestoreErrorMessage(error);
+  }
+}
+
+export async function updateEvent(id, updates) {
+  try {
+    const db = getAdminDb();
+    const eventRef = db.collection(EVENT_COLLECTION).doc(id);
+    const existing = await eventRef.get();
+
+    if (!existing.exists) {
+      return null;
+    }
+
+    const updated = {
+      ...existing.data(),
+      ...updates,
+      id,
+      updatedAt: new Date().toISOString()
+    };
+
+    await eventRef.set(updated);
+    return updated;
+  } catch (error) {
+    withFirestoreErrorMessage(error);
+  }
+}
+
+export async function deleteEvent(id) {
+  try {
+    const db = getAdminDb();
+    const eventRef = db.collection(EVENT_COLLECTION).doc(id);
+    const existing = await eventRef.get();
+
+    if (!existing.exists) {
+      return false;
+    }
+
+    await eventRef.delete();
+    return true;
+  } catch (error) {
+    withFirestoreErrorMessage(error);
+  }
+}
