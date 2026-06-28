@@ -260,6 +260,30 @@ function App() {
           }
         />
         <Route
+          path="/incubation"
+          element={
+            <SiteLayout>
+              <IncubationPage />
+            </SiteLayout>
+          }
+        />
+        <Route
+          path="/ecosystem"
+          element={
+            <SiteLayout>
+              <EcosystemPage />
+            </SiteLayout>
+          }
+        />
+        <Route
+          path="/events"
+          element={
+            <SiteLayout>
+              <EventsPage />
+            </SiteLayout>
+          }
+        />
+        <Route
           path="/apply"
           element={
             <SiteLayout>
@@ -535,10 +559,9 @@ function SiteLayout({ children }) {
   const staggeredMenuItems = [
     { label: 'About', ariaLabel: 'About Dnyanavishkar', link: '/#about' },
     { label: 'Our Startups', ariaLabel: 'Current incubatees', link: '/projects' },
-    { label: 'Incubation', ariaLabel: 'Incubation Programme', link: '#' },
-    { label: 'Portfolio', ariaLabel: 'Portfolio of startups', link: '/projects' },
-    { label: 'Ecosystem', ariaLabel: 'Mentors, investors & industry', link: '#' },
-    { label: 'Events', ariaLabel: 'Events & workshops', link: '#' },
+    { label: 'Incubation', ariaLabel: 'Incubation Programme', link: '/incubation' },
+    { label: 'Ecosystem', ariaLabel: 'Mentors, investors & industry', link: '/ecosystem' },
+    { label: 'Events', ariaLabel: 'Events & workshops', link: '/events' },
   ];
 
   return (
@@ -726,25 +749,25 @@ function SiteLayout({ children }) {
       <div className="nav-marquee" id="navMarquee" aria-label="Dnyanavishkar slogan ticker">
         <div className="nav-marquee-track">
           <div className="nav-marquee-group">
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
+            <span className="nav-marquee-item">ideate.innovate.incubate</span>
+            <span className="nav-marquee-item">ideate.innovate.incubate</span>
+            <span className="nav-marquee-item">ideate.innovate.incubate</span>
+            <span className="nav-marquee-item">ideate.innovate.incubate</span>
+            <span className="nav-marquee-item">ideate.innovate.incubate</span>
           </div>
           <div className="nav-marquee-group" aria-hidden="true">
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
+            <span className="nav-marquee-item">ideate.innovate.incubate</span>
+            <span className="nav-marquee-item">ideate.innovate.incubate</span>
+            <span className="nav-marquee-item">ideate.innovate.incubate</span>
+            <span className="nav-marquee-item">ideate.innovate.incubate</span>
+            <span className="nav-marquee-item">ideate.innovate.incubate</span>
           </div>
           <div className="nav-marquee-group" aria-hidden="true">
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
-            <span className="nav-marquee-item">IDEATE • INNOVATE • INCUBATE • IMPACT</span>
+            <span className="nav-marquee-item">ideate.innovate.incubate</span>
+            <span className="nav-marquee-item">ideate.innovate.incubate</span>
+            <span className="nav-marquee-item">ideate.innovate.incubate</span>
+            <span className="nav-marquee-item">ideate.innovate.incubate</span>
+            <span className="nav-marquee-item">ideate.innovate.incubate</span>
           </div>
         </div>
       </div>
@@ -783,7 +806,7 @@ function SiteLayout({ children }) {
                   <img src="/media/logo.png" alt="Dnyanavishkar Foundation Logo" className="footer-logo-img" />
                   <div className="footer-logo-text-wrapper">
                     <span className="footer-logo-title">DNYANAVISHKAR FOUNDATION</span>
-                    <span className="footer-logo-tagline">IDEATE. INNOVATE. INCUBATE. IMPACT.</span>
+                    <span className="footer-logo-tagline">IDEATE. INNOVATE. INCUBATE.</span>
                   </div>
                 </Link>
               </div>
@@ -1150,41 +1173,144 @@ function HomePage() {
         {/* Bottom Section: Support Startups */}
         <div className="about-support-section">
           <div className="support-section-inner">
-            <h2 className="support-main-title">Dnyanavishkar supports startups in following ways</h2>
+            <div className="support-section-header">
+              <span className="support-eyebrow">OUR SUPPORT ECOSYSTEM</span>
+              <h2 className="support-main-title">How We Support Startups</h2>
+              <p className="support-subtitle">
+                Supporting innovators at every stage of their entrepreneurial journey—from idea validation to venture growth.
+              </p>
+            </div>
             
-            {/* SVG-based cards — exact SCEI assets */}
             <div className="support-grid-scei">
               <div className="support-card">
-                <div className="support-card-shine"></div>
-                <img src="/support-cards/card1.svg" alt="Access to network of journey" />
+                <div className="support-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                  </svg>
+                </div>
+                <h3>Access to Network of Experts</h3>
+                <p>Connect with experienced mentors, industry leaders, and domain experts.</p>
+                <a href="#expert-network" className="support-learn-more" onClick={(e) => e.preventDefault()}>
+                  Learn More <span className="arrow">&rarr;</span>
+                </a>
               </div>
+
               <div className="support-card">
-                <div className="support-card-shine"></div>
-                <img src="/support-cards/card2.svg" alt="Access to technology lab" />
+                <div className="support-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10 2v7.31L4.75 18c-.85 1.37.13 3.14 1.74 3.14h11.02c1.61 0 2.59-1.77 1.74-3.14L14 9.31V2h-4z" />
+                    <path d="M8.5 15h7" />
+                    <path d="M10 2h4" />
+                  </svg>
+                </div>
+                <h3>Access to Technology Labs</h3>
+                <p>Utilize state-of-the-art laboratory facilities and advanced equipment.</p>
+                <a href="#tech-labs" className="support-learn-more" onClick={(e) => e.preventDefault()}>
+                  Learn More <span className="arrow">&rarr;</span>
+                </a>
               </div>
+
               <div className="support-card">
-                <div className="support-card-shine"></div>
-                <img src="/support-cards/card3.svg" alt="Company registration support" />
+                <div className="support-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
+                  </svg>
+                </div>
+                <h3>Company Registration Support</h3>
+                <p>Get assistance with legal incorporation, compliance, and structure.</p>
+                <a href="#registration" className="support-learn-more" onClick={(e) => e.preventDefault()}>
+                  Learn More <span className="arrow">&rarr;</span>
+                </a>
               </div>
+
               <div className="support-card">
-                <div className="support-card-shine"></div>
-                <img src="/support-cards/card4.svg" alt="Co-working space" />
+                <div className="support-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="2" ry="2" />
+                    <path d="M9 22V12h6v10" />
+                    <path d="M8 7h2v2H8z" />
+                    <path d="M14 7h2v2H14z" />
+                    <path d="M8 12h2v2H8z" />
+                    <path d="M14 12h2v2H14z" />
+                  </svg>
+                </div>
+                <h3>Premium Coworking Spaces</h3>
+                <p>Work from fully equipped modern offices and collaborative zones.</p>
+                <a href="#coworking" className="support-learn-more" onClick={(e) => e.preventDefault()}>
+                  Learn More <span className="arrow">&rarr;</span>
+                </a>
               </div>
+
               <div className="support-card">
-                <div className="support-card-shine"></div>
-                <img src="/support-cards/card5.svg" alt="Intellectual property rights" />
+                <div className="support-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2v18" />
+                    <path d="M9 20h6" />
+                    <path d="M5 6h14" />
+                    <path d="M5 6l-2 8h4L5 6z" />
+                    <path d="M2 14h6" />
+                    <path d="M19 6l-2 8h4l-2-8z" />
+                    <path d="M16 14h6" />
+                  </svg>
+                </div>
+                <h3>IP & Patent Filing Support</h3>
+                <p>Protect your innovations with guidance on patents and trademarks.</p>
+                <a href="#ip-patent" className="support-learn-more" onClick={(e) => e.preventDefault()}>
+                  Learn More <span className="arrow">&rarr;</span>
+                </a>
               </div>
+
               <div className="support-card">
-                <div className="support-card-shine"></div>
-                <img src="/support-cards/card6.svg" alt="Internship support" />
+                <div className="support-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                    <path d="M6 12v5c0 2 2.5 3 6 3s6-1 6-3v-5" />
+                  </svg>
+                </div>
+                <h3>Student Internship Support</h3>
+                <p>Recruit talented interns from premier academic institutions.</p>
+                <a href="#internships" className="support-learn-more" onClick={(e) => e.preventDefault()}>
+                  Learn More <span className="arrow">&rarr;</span>
+                </a>
               </div>
+
               <div className="support-card">
-                <div className="support-card-shine"></div>
-                <img src="/support-cards/card7.svg" alt="Technical & business mentoring" />
+                <div className="support-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                </div>
+                <h3>Technical & Business Mentoring</h3>
+                <p>Receive tailored one-on-one guidance from seasoned entrepreneurs.</p>
+                <a href="#mentoring" className="support-learn-more" onClick={(e) => e.preventDefault()}>
+                  Learn More <span className="arrow">&rarr;</span>
+                </a>
               </div>
+
               <div className="support-card">
-                <div className="support-card-shine"></div>
-                <img src="/support-cards/card8.svg" alt="Training & workshops" />
+                <div className="support-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22V17" />
+                    <path d="M5 17h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z" />
+                    <path d="M9 22h6" />
+                    <path d="M8 8h8" />
+                    <path d="M8 12h5" />
+                  </svg>
+                </div>
+                <h3>Entrepreneurship Training</h3>
+                <p>Participate in structured workshops, bootcamps, and masterclasses.</p>
+                <a href="#training" className="support-learn-more" onClick={(e) => e.preventDefault()}>
+                  Learn More <span className="arrow">&rarr;</span>
+                </a>
               </div>
             </div>
           </div>
@@ -1197,62 +1323,64 @@ function HomePage() {
         </video>
         <div className="mission-bg"></div>
         <div className="container">
-          <div className="mission-inner">
-            <span className="section-eyebrow section-eyebrow-light" style={{ display: 'block', textAlign: 'center' }}>
-              {siteData.mission.eyebrow}
-            </span>
-            <h2 className="section-title-serif section-title-light" style={{ textAlign: 'center' }}>
-              {siteData.mission.title}
-            </h2>
-            <div className="title-line-accent title-line-light" style={{ marginLeft: 'auto', marginRight: 'auto' }}></div>
-            <blockquote className="mission-quote" style={{ textAlign: 'center' }}>
-              "{siteData.mission.quote}"
-            </blockquote>
-            <div className="mission-pillars" style={{ textAlign: 'center' }}>
-              {siteData.mission.pillars.map((pillar) => (
-                <div key={pillar.id} className="pillar" style={{ textAlign: 'center' }}>
-                  <h3>{pillar.title}</h3>
-                  <p>{pillar.description}</p>
-                </div>
-              ))}
+          <div className="mission-layout">
+            
+            {/* Left Column: Heading and Mission Statement */}
+            <div className="mission-left">
+              <h2 className="section-title-serif">Our Mission</h2>
+              <div className="mission-header-line"></div>
+              <p className="mission-statement-text">
+                Our mission is to identify, nurture, and scale innovative ideas by providing structured mentorship, incubation support, industry collaboration, and access to opportunities that create meaningful societal impact.
+              </p>
             </div>
+
+            {/* Right Column: Vertically stacked cards */}
+            <div className="mission-right">
+              <div className="pillar">
+                <div className="pillar-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                </div>
+                <h3>Mentorship & Guidance</h3>
+                <p>Providing expert mentorship, structured guidance, and practical support for innovators throughout their journey.</p>
+              </div>
+
+              <div className="pillar">
+                <div className="pillar-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4.5 16.5c-1.5 1.25-2.5 3.5-2.5 3.5s2.25-1 3.5-2.5" />
+                    <path d="M12 2C6.5 2 2 6.5 2 12c0 2.5 1 4.5 2.5 6l9-9 1.5-1.5L20 2.5 21.5 4 16.5 9l-1.5 1.5-9 9z" />
+                    <path d="M9 15l6-6" />
+                  </svg>
+                </div>
+                <h3>Incubation & Growth</h3>
+                <p>Supporting startups with incubation, funding opportunities, infrastructure, and strategic resources.</p>
+              </div>
+
+              <div className="pillar">
+                <div className="pillar-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="18" cy="5" r="3" />
+                    <circle cx="6" cy="12" r="3" />
+                    <circle cx="18" cy="19" r="3" />
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                  </svg>
+                </div>
+                <h3>Collaboration & Ecosystem</h3>
+                <p>Connecting academia, industry, government, and entrepreneurs to build sustainable innovation ecosystems.</p>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
 
-      <section className="projects-funded" id="projects">
-        <div className="container">
-          <div className="stories-header">
-            <span className="section-eyebrow">Innovation at Work</span>
-            <h2 className="section-title-serif">Projects Funded</h2>
-            <div className="title-line-accent"></div>
-          </div>
-          <div className="projects-grid">
-            {featuredProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} showInternalLink />
-            ))}
-          </div>
-          <div style={{ textAlign: 'center', marginTop: 48 }}>
-            <Link
-              to="/projects"
-              className="slide-btn"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'var(--clr-primary)',
-                color: '#ffffff',
-                padding: '14px 32px',
-                borderRadius: 'var(--radius-sm)',
-                fontWeight: 600,
-                fontSize: '0.95rem'
-              }}
-            >
-              View All Projects <span className="btn-arrow" aria-hidden="true">&rarr;</span>
-            </Link>
-          </div>
-        </div>
-      </section>
+
 
       <section className="collaborations" id="collaborations">
         <div className="container">
@@ -1363,6 +1491,82 @@ function HomePage() {
                 <span>{siteData.voice.role}</span>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Home Page Events Showcase */}
+      <section className="home-events-showcase-section">
+        <div className="container">
+          <div className="section-header text-center" style={{ marginBottom: '48px' }}>
+            <span className="incubation-eyebrow-label">OUR IMPACT STORIES</span>
+            <h2 className="section-title-serif">Recent Events & Highlights</h2>
+            <div className="title-accent-line centered"></div>
+          </div>
+
+          <div className="events-grid">
+            <a 
+              href="https://scei.org.in/collaboration-with-curtis-instruments-india-pvt-ltd-for-csr-grants/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="event-card-link-wrapper"
+            >
+              <div className="event-item-card">
+                <div className="event-item-image-wrap">
+                  <img src="https://scei.org.in/wp-content/uploads/2024/04/event-1.jpg" alt="Collaboration with Curtis Instruments India Pvt Ltd for Corporate Social Responsibility Grants" className="event-item-img" />
+                </div>
+                <div className="event-item-content">
+                  <h3 className="event-item-title">Collaboration with Curtis Instruments India Pvt Ltd for Corporate Social Responsibility Grants</h3>
+                  <div className="event-item-footer">
+                    <span className="read-more-link">Read Story &rarr;</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            <a 
+              href="https://scei.org.in/scei-incubated-start-up-guruji-air-collaborated-with-western-university-cambodia/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="event-card-link-wrapper"
+            >
+              <div className="event-item-card">
+                <div className="event-item-image-wrap">
+                  <img src="https://scei.org.in/wp-content/uploads/2024/04/event-3.jpg" alt="SCEI Incubated start-up Guruji AIR collaborated with Western University, Cambodia" className="event-item-img" />
+                </div>
+                <div className="event-item-content">
+                  <h3 className="event-item-title">SCEI Incubated start-up Guruji AIR collaborated with Western University, Cambodia</h3>
+                  <div className="event-item-footer">
+                    <span className="read-more-link">Read Story &rarr;</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            <a 
+              href="https://scei.org.in/scei-signed-an-mou-with-cimp-business-incubation-and-innovation-foundation-on-11th-march-24/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="event-card-link-wrapper"
+            >
+              <div className="event-item-card">
+                <div className="event-item-image-wrap">
+                  <img src="https://scei.org.in/wp-content/uploads/2024/04/event-5.jpg" alt="SCEI signed an MOU with CIMP Business Incubation and Innovation Foundation on 11th March 24" className="event-item-img" />
+                </div>
+                <div className="event-item-content">
+                  <h3 className="event-item-title">SCEI signed an MOU with CIMP Business Incubation and Innovation Foundation on 11th March 24</h3>
+                  <div className="event-item-footer">
+                    <span className="read-more-link">Read Story &rarr;</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <div className="text-center" style={{ marginTop: '40px' }}>
+            <Link to="/events" className="cta-button">
+              View All Events &rarr;
+            </Link>
           </div>
         </div>
       </section>
@@ -1566,7 +1770,7 @@ function ProjectsPage() {
 
   return (
     <>
-      <header className="page-header">
+      <header className="page-header startups-page-header">
         <div className="container">
           <h1>All Funded Projects</h1>
           <p>Explore the innovative solutions and community-driven initiatives we have supported across the nation.</p>
@@ -2980,6 +3184,625 @@ function DashboardPage() {
   );
 }
 
+function IncubationPage() {
+  const [activeFaq, setActiveFaq] = useState(null);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const galleryImages = [
+    { url: 'https://scei.org.in/wp-content/uploads/2023/12/event-1.jpg', caption: 'Incubatees Meeting' },
+    { url: 'https://scei.org.in/wp-content/uploads/2023/12/event-3.jpg', caption: 'Interactive Workshops' },
+    { url: 'https://scei.org.in/wp-content/uploads/2023/12/event-2.jpg', caption: 'Networking Events' },
+    { url: 'https://scei.org.in/wp-content/uploads/2023/12/entrance-1.jpg', caption: 'Ecosystem Entrance' },
+    { url: 'https://scei.org.in/wp-content/uploads/2023/12/cabin-5.jpg', caption: 'Co-working Office Space' },
+    { url: 'https://scei.org.in/wp-content/uploads/2023/12/cabin-4.jpg', caption: 'Dedicated Desks' },
+    { url: 'https://scei.org.in/wp-content/uploads/2023/12/cabin-3.jpg', caption: 'Private Cabin Spaces' },
+    { url: 'https://scei.org.in/wp-content/uploads/2023/12/cabin-2.jpg', caption: 'Discussion Rooms' },
+    { url: 'https://scei.org.in/wp-content/uploads/2023/12/cabin-1.jpg', caption: 'Meeting Lounge' },
+  ];
+
+  const testimonials = [
+    {
+      name: 'Ms. Rishika Tibrewal',
+      role: 'Startup Incubatee',
+      text: 'I have been affiliated with Dnyanavishkar Foundation for approximately two years... The level of support and the array of opportunities extended by the entire team have been truly exceptional. Managing a food-based startup has necessitated a distinct form of support and mentoring, diverging from the needs of my peers. However, I can confidently affirm that all startups receive utmost attention, and the atmosphere is distinctly characterized by collaboration and creativity.',
+      avatar: 'https://scei.org.in/wp-content/uploads/2023/12/rishika-img.jpg',
+    },
+    {
+      name: 'Mr. Ajay Alandkar',
+      role: 'Founder & Director, My Job Factory',
+      text: 'One of the greatest milestone achievements of my Startup was to have got selected. I got the much-needed mentorship from the leadership. Dnyanavishkar Foundation also provided all Startups with essential resources like office space, mentorship, starting legal guidance, patent guidance, and much more.',
+      avatar: 'https://scei.org.in/wp-content/uploads/2023/11/ajay-alandkar.jpg',
+    },
+    {
+      name: 'Mr. Jaydeep Deshpande',
+      role: 'Ecosystem Partner',
+      text: 'Starting from validation, structuring our perspectives, and providing workspace for mentorship, to industry and investor connects; Dnyanavishkar Foundation has been instrumental in providing valuable support to the startup ecosystem. We’re deeply indebted to Dnyanavishkar Foundation and I can vouch for the benefits of this program.',
+      avatar: 'https://scei.org.in/wp-content/uploads/2023/12/jaydeep-img.jpg',
+    },
+    {
+      name: 'Mr. Shishir Vaidya',
+      role: 'Founder, MumSmile',
+      text: 'A Helping Hand for Aspiring Entrepreneurs. Starting your own business can be a daunting task, but Dnyanavishkar Foundation has made the journey much easier for me. Their community of like-minded entrepreneurs, cutting-edge facilities, and expert guidance have been a lifeline.',
+      avatar: 'https://scei.org.in/wp-content/uploads/2023/11/shishir-vaidya-mumsmile.jpg',
+    },
+    {
+      name: 'Mr. Pratap Pawar',
+      role: 'Founder, GURUJI AIR - Centre of Excellence',
+      text: 'I would like to appreciate the support and encouragement of the team. As an incubatee, we got all facilities that are required to develop a prototype product. Dnyanavishkar Foundation has a great team of mentorship and leadership, which will be helping us to grow in the market.',
+      avatar: 'https://scei.org.in/wp-content/uploads/2023/12/pratap-400x400.jpg',
+    },
+  ];
+
+  const faqs = [
+    {
+      question: 'What is the requirement to get incubated?',
+      answer: 'Your Idea should be viable and convertible into a Private Ltd. Company.',
+    },
+    {
+      question: 'What all services are provided to the incubatees?',
+      answer: (
+        <ul className="faq-service-list">
+          <li>Business & Technology Mentoring</li>
+          <li>Access to Research Labs</li>
+          <li>Well-Equipped FABLAB</li>
+          <li>2 Years Incubation Support</li>
+          <li>Office space with PC & Wi-Fi</li>
+          <li>AWS & IBM Credits worth $1,25,000</li>
+          <li>Investor & Industry Connect</li>
+        </ul>
+      ),
+    },
+    {
+      question: 'What makes Dnyanavishkar Foundation different from other start-up incubators?',
+      answer: 'Every startup goes through multiple challenges at different stages of an idea or startup. Mentoring support helps startups to cross the chasm at multiple stages. Technical and business mentoring is the core strength of our foundation, where we invest time, energy, and effort to enable the startups to build and commercialize innovative products.',
+    },
+    {
+      question: "What's the tenure of incubation?",
+      answer: 'Tenure of incubation shall be normally for 2 years and extendable by another 1 year.',
+    },
+  ];
+
+  const nextImage = () => {
+    setActiveImageIndex((prev) => (prev + 1) % galleryImages.length);
+  };
+
+  const prevImage = () => {
+    setActiveImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
+  };
+
+  return (
+    <div className="incubation-page">
+      <header className="page-header incubation-page-header">
+        <div className="container">
+          <h1>Incubation Programme</h1>
+          <p>Nurturing early-stage manufacturing and technology startups through structured mentoring, prototyping, and ecosystem access.</p>
+        </div>
+      </header>
+
+      <main className="incubation-content">
+        {/* Section 1: About the Programme */}
+        <section className="incubation-about-section">
+          <div className="container">
+            <div className="incubation-about-grid">
+              
+              {/* Left Column: Info, Benefits & CTA */}
+              <div className="incubation-about-text">
+                <span className="incubation-eyebrow-label">ABOUT THE PROGRAMME</span>
+                <h2 className="section-title-serif incubation-main-heading">From Idea Validation<br />to Startup Growth.</h2>
+                <div className="title-accent-line"></div>
+                
+                <p className="incubation-intro-desc">
+                  Dnyanavishkar Foundation offers a premium, structured incubation ecosystem designed for early-stage technology and manufacturing startups. We support founders at every stage of their entrepreneurship journey, converting breakthrough research and bold ideas into scalable, fundable, and commercially viable ventures.
+                </p>
+
+                <div className="incubation-benefits-list">
+                  <div className="benefit-item">
+                    <span className="benefit-icon">✓</span>
+                    <span className="benefit-text">Structured Mentorship</span>
+                  </div>
+                  <div className="benefit-item">
+                    <span className="benefit-icon">✓</span>
+                    <span className="benefit-text">Technology & Prototype Support</span>
+                  </div>
+                  <div className="benefit-item">
+                    <span className="benefit-icon">✓</span>
+                    <span className="benefit-text">Business Validation</span>
+                  </div>
+                  <div className="benefit-item">
+                    <span className="benefit-icon">✓</span>
+                    <span className="benefit-text">Industry Networking</span>
+                  </div>
+                  <div className="benefit-item">
+                    <span className="benefit-icon">✓</span>
+                    <span className="benefit-text">Funding Readiness</span>
+                  </div>
+                  <div className="benefit-item">
+                    <span className="benefit-icon">✓</span>
+                    <span className="benefit-text">Dedicated Incubation Infrastructure</span>
+                  </div>
+                </div>
+
+                <div className="incubation-about-cta">
+                  <Link to="/apply?type=incubation" className="cta-button">
+                    Apply for Incubation
+                  </Link>
+                </div>
+              </div>
+
+              {/* Right Column: Premium Illustration with Blueprint Backing */}
+              <div className="incubation-about-visual-wrapper">
+                <div className="blueprint-backdrop"></div>
+                <div className="incubation-about-visual">
+                  <img 
+                    src="/media/incubation_hub_illustration.jpg" 
+                    alt="Startup founders collaborating with mentors inside an innovation hub" 
+                    className="about-illustration-img"
+                  />
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* Section 2: What You'll Receive & Journey Timeline */}
+        <section className="incubation-pillars-section">
+          <div className="container">
+            <div className="section-header text-center">
+              <span className="incubation-eyebrow-label">SUPPORT MECHANISMS</span>
+              <h2 className="section-title-serif">What You'll Receive</h2>
+              <p className="section-subtitle">Comprehensive institutional enablement designed to foster success</p>
+              <div className="title-accent-line centered"></div>
+            </div>
+
+            <div className="incubation-pillars-grid">
+              
+              {/* Card 1: Training */}
+              <div className="incubation-pillar-card p-training">
+                <div className="card-top-tag bg-blue">TRAINING</div>
+                <div className="card-body-content">
+                  <div className="card-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                    </svg>
+                  </div>
+                  <h3>Training</h3>
+                  <p>Structured learning, regular expert masterclasses, and comprehensive entrepreneurship courses.</p>
+                </div>
+              </div>
+
+              {/* Card 2: Mentoring */}
+              <div className="incubation-pillar-card p-mentoring">
+                <div className="card-top-tag bg-orange">MENTORING</div>
+                <div className="card-body-content">
+                  <div className="card-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                  </div>
+                  <h3>Mentoring</h3>
+                  <p>Business & technical mentoring from industry veterans and academic researchers.</p>
+                </div>
+              </div>
+
+              {/* Card 3: Prototyping & PoC */}
+              <div className="incubation-pillar-card p-prototyping">
+                <div className="card-top-tag bg-green">PROTOTYPING</div>
+                <div className="card-body-content">
+                  <div className="card-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                    </svg>
+                  </div>
+                  <h3>Prototyping & PoC</h3>
+                  <p>Access to FABLAB, rapid prototyping tools, and proof-of-concept validation support.</p>
+                </div>
+              </div>
+
+              {/* Card 4: Ecosystem Access */}
+              <div className="incubation-pillar-card p-ecosystem">
+                <div className="card-top-tag bg-purple">ECOSYSTEM ACCESS</div>
+                <div className="card-body-content">
+                  <div className="card-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="18" cy="5" r="3" />
+                      <circle cx="6" cy="12" r="3" />
+                      <circle cx="18" cy="19" r="3" />
+                      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                    </svg>
+                  </div>
+                  <h3>Ecosystem Access</h3>
+                  <p>Integration with academic research labs, DST networks, and investor channels.</p>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Subtle Timeline Connector Journey */}
+            <div className="incubation-journey-timeline">
+              <div className="timeline-title">Incubation Journey</div>
+              <div className="timeline-steps">
+                <div className="timeline-step">
+                  <div className="step-circle">01</div>
+                  <div className="step-label">Idea</div>
+                </div>
+                <div className="timeline-arrow">&rarr;</div>
+                <div className="timeline-step">
+                  <div className="step-circle">02</div>
+                  <div className="step-label">Validation</div>
+                </div>
+                <div className="timeline-arrow">&rarr;</div>
+                <div className="timeline-step">
+                  <div className="step-circle">03</div>
+                  <div className="step-label">Prototype</div>
+                </div>
+                <div className="timeline-arrow">&rarr;</div>
+                <div className="timeline-step">
+                  <div className="step-circle">04</div>
+                  <div className="step-label">Incubation</div>
+                </div>
+                <div className="timeline-arrow">&rarr;</div>
+                <div className="timeline-step">
+                  <div className="step-circle">05</div>
+                  <div className="step-label">Funding</div>
+                </div>
+                <div className="timeline-arrow">&rarr;</div>
+                <div className="timeline-step">
+                  <div className="step-circle">06</div>
+                  <div className="step-label">Scale</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* Section 3: Interactive Gallery / Infrastructure */}
+        <section className="incubation-gallery-section">
+          <div className="container">
+            <div className="gallery-header text-center">
+              <h2>Infrastructure & Environment</h2>
+              <p className="section-subtitle">Explore the spaces designed to spark creativity, collaboration, and high-impact development</p>
+              <div className="title-accent-line centered"></div>
+            </div>
+            
+            <div className="slider-container">
+              <div className="slider-viewport">
+                <img 
+                  src={galleryImages[activeImageIndex].url} 
+                  alt={galleryImages[activeImageIndex].caption} 
+                  className="slider-active-img"
+                />
+                <div className="slider-caption">
+                  {galleryImages[activeImageIndex].caption}
+                </div>
+                <button className="slider-nav-btn prev" onClick={prevImage} aria-label="Previous image">
+                  ◀
+                </button>
+                <button className="slider-nav-btn next" onClick={nextImage} aria-label="Next image">
+                  ▶
+                </button>
+              </div>
+              
+              <div className="slider-thumbnails">
+                {galleryImages.map((img, idx) => (
+                  <button 
+                    key={idx} 
+                    className={`thumb-btn ${idx === activeImageIndex ? 'active' : ''}`}
+                    onClick={() => setActiveImageIndex(idx)}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  >
+                    <img src={img.url} alt="" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 4: Testimonials */}
+        <section className="incubation-testimonials-section">
+          <div className="container">
+            <div className="section-header text-center">
+              <h2>Ecosystem Voices</h2>
+              <p className="section-subtitle">What our incubatee founders and partners say about Dnyanavishkar</p>
+              <div className="title-accent-line centered"></div>
+            </div>
+            
+            <div className="testimonials-masonry-grid">
+              {testimonials.map((t, idx) => (
+                <div key={idx} className="testimonial-card">
+                  <div className="quote-mark">“</div>
+                  <p className="testimonial-text">{t.text}</p>
+                  <div className="testimonial-author">
+                    <img src={t.avatar} alt={t.name} className="author-avatar" />
+                    <div className="author-info">
+                      <h4>{t.name}</h4>
+                      <span>{t.role}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Section 5: FAQs */}
+        <section className="incubation-faq-section">
+          <div className="container">
+            <div className="section-header text-center">
+              <h2>Frequently Asked Questions</h2>
+              <div className="title-accent-line centered"></div>
+            </div>
+            
+            <div className="faq-accordion-wrapper">
+              {faqs.map((faq, idx) => (
+                <div key={idx} className={`faq-item ${idx === activeFaq ? 'active' : ''}`}>
+                  <button 
+                    className="faq-question-btn" 
+                    onClick={() => setActiveFaq(activeFaq === idx ? null : idx)}
+                  >
+                    <h3>{faq.question}</h3>
+                    <span className="faq-toggle-icon">{idx === activeFaq ? '−' : '+'}</span>
+                  </button>
+                  <div className="faq-answer-panel">
+                    <div className="faq-answer-content">
+                      {typeof faq.answer === 'string' ? <p>{faq.answer}</p> : faq.answer}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}
+
+function EcosystemPage() {
+  const facilities = [
+    {
+      title: "FabLab (Fabrication Lab)",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+        </svg>
+      ),
+      description: "State-of-the-art rapid prototyping setup featuring additive manufacturing, laser cutters, CNC micro-milling, and PCB development workstations."
+    },
+    {
+      title: "Robotics & IoT Laboratory",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+          <line x1="8" y1="21" x2="16" y2="21" />
+          <line x1="12" y1="17" x2="12" y2="21" />
+        </svg>
+      ),
+      description: "Equipped with advanced microcontrollers, sensors, debugging instruments, signal generators, and oscilloscopes for smart system developments."
+    },
+    {
+      title: "High Performance Computing Node",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="2" width="20" height="8" rx="2" />
+          <rect x="2" y="14" width="20" height="8" rx="2" />
+          <line x1="6" y1="6" x2="6.01" y2="6" />
+          <line x1="6" y1="18" x2="6.01" y2="18" />
+        </svg>
+      ),
+      description: "Access to dedicated high-end GPU servers for training machine learning models, running thermal/flow simulations, and complex FEA rendering."
+    },
+    {
+      title: "Collaborative Coworking Space",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      ),
+      description: "Premium flexible desks, private discussion cabins, high-speed fiber internet, and creative lounges designed to foster networking and productivity."
+    }
+  ];
+
+  const mentors = [
+    {
+      name: "Dr. Arvind Sharma",
+      role: "Chief Scientific Advisor",
+      domain: "Deep Tech, AI & Robotics",
+      bio: "20+ years of research in autonomous systems and AI algorithms. Advises startups on technical architecture and machine learning pipelines.",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&h=150&q=80"
+    },
+    {
+      name: "Ms. Priyal Mehta",
+      role: "Venture Partner & Advisor",
+      domain: "Product-Market Fit & Scaleup VC",
+      bio: "Ex-founder with multiple exits. Specialized in growth hacking, investment readiness, venture structuring, and early-stage capital fundraising.",
+      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&h=150&q=80"
+    },
+    {
+      name: "Mr. Sameer Deshpande",
+      role: "Industry Advisory Lead",
+      domain: "Industrial Manufacturing & Supply Chain",
+      bio: "Senior manufacturing veteran. Guides hardware cohort startups on component sourcing, mold designs, vendor management, and assembly scaling.",
+      avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=150&h=150&q=80"
+    },
+    {
+      name: "Adv. Rohan Sen",
+      role: "IP & Startup Legal Counsel",
+      domain: "Intellectual Property & Corporate Laws",
+      bio: "Patent attorney advising on IP protection pathways, technology licensing agreements, corporate governance, and early equity vesting models.",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80"
+    }
+  ];
+
+  return (
+    <div className="ecosystem-page">
+      <header className="page-header ecosystem-page-header">
+        <div className="container">
+          <div className="mb-3 text-center">
+            <div className="d-inline-block" style={{ maxWidth: '550px' }}>
+              <h1 className="pix-sliding-headline-2 font-weight-bold text-white">
+                <span className="slide-in-container">
+                  <span className="pix-sliding-item" style={{ transitionDelay: '0ms' }}>
+                    Ecosystem
+                  </span>
+                </span>
+              </h1>
+            </div>
+          </div>
+          <p>Connecting academia, advanced prototyping labs, industry veterans, and venture capital investors.</p>
+        </div>
+      </header>
+
+      <main className="ecosystem-content">
+        {/* Section 1: Labs & Facilities */}
+        <section className="ecosystem-facilities-section">
+          <div className="container">
+            <div className="section-header text-center">
+              <span className="incubation-eyebrow-label">INFRASTRUCTURE</span>
+              <h2 className="section-title-serif">Advanced Labs & Facilities</h2>
+              <p className="section-subtitle">Premium equipment and specialized workspaces designed to expedite prototype developments</p>
+              <div className="title-accent-line centered"></div>
+            </div>
+
+            <div className="facilities-grid">
+              {facilities.map((fac, idx) => (
+                <div key={idx} className="facility-card">
+                  <div className="facility-icon-wrap">
+                    {fac.icon}
+                  </div>
+                  <h3 className="facility-title">{fac.title}</h3>
+                  <p className="facility-desc">{fac.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Section 2: Mentors & Advisors */}
+        <section className="ecosystem-mentors-section">
+          <div className="container">
+            <div className="section-header text-center">
+              <span className="incubation-eyebrow-label">EXPERTISE ACCESS</span>
+              <h2 className="section-title-serif">Our Mentors & Advisors</h2>
+              <p className="section-subtitle">Learn from industry veterans, patent lawyers, and successful technology founders</p>
+              <div className="title-accent-line centered"></div>
+            </div>
+
+            <div className="mentors-grid">
+              {mentors.map((men, idx) => (
+                <div key={idx} className="mentor-card">
+                  <div className="mentor-header">
+                    <img src={men.avatar} alt={men.name} className="mentor-avatar" />
+                    <div className="mentor-identity">
+                      <h3 className="mentor-name">{men.name}</h3>
+                      <span className="mentor-role">{men.role}</span>
+                    </div>
+                  </div>
+                  <div className="mentor-body">
+                    <span className="mentor-domain-tag">{men.domain}</span>
+                    <p className="mentor-bio">{men.bio}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}
+
+function EventsPage() {
+  const events = [
+    {
+      title: "Collaboration with Curtis Instruments India Pvt Ltd for Corporate Social Responsibility Grants",
+      url: "https://scei.org.in/collaboration-with-curtis-instruments-india-pvt-ltd-for-csr-grants/",
+      image: "https://scei.org.in/wp-content/uploads/2024/04/event-1.jpg"
+    },
+    {
+      title: "SCEI Incubated start-up Guruji AIR collaborated with Western University, Cambodia",
+      url: "https://scei.org.in/scei-incubated-start-up-guruji-air-collaborated-with-western-university-cambodia/",
+      image: "https://scei.org.in/wp-content/uploads/2024/04/event-3.jpg"
+    },
+    {
+      title: "SCEI signed an MOU with CIMP Business Incubation and Innovation Foundation on 11th March 24",
+      url: "https://scei.org.in/scei-signed-an-mou-with-cimp-business-incubation-and-innovation-foundation-on-11th-march-24/",
+      image: "https://scei.org.in/wp-content/uploads/2024/04/event-5.jpg"
+    },
+    {
+      title: "SCEI conducted a session for MSFDA with STLRC on Entrepreneurship & Innovations",
+      url: "https://scei.org.in/scei-conducted-a-session-for-msfda-with-stlrc-on-entrepreneurship-and-innovations/",
+      image: "https://scei.org.in/wp-content/uploads/2024/04/event-6.jpg"
+    },
+    {
+      title: "Durham University delegates visit SCEI: 10th Jan 2024",
+      url: "https://scei.org.in/durham-university-delegates-visit-scei/",
+      image: "https://scei.org.in/wp-content/uploads/2024/04/event-7.jpg"
+    },
+    {
+      title: "SCEI at State Level Event in Nagpur Startup Expo 2023",
+      url: "https://scei.org.in/scei-at-state-level-event-in-nagpur-startup-expo-2023/",
+      image: "https://scei.org.in/wp-content/uploads/2023/12/scei-nagpur-startup-expo-2023.jpg"
+    }
+  ];
+
+  return (
+    <div className="events-page">
+      <header className="page-header events-page-header">
+        <div className="container">
+          <div className="mb-3 text-center">
+            <div className="d-inline-block" style={{ maxWidth: '550px' }}>
+              <h1 className="pix-sliding-headline-2 font-weight-bold text-white">
+                <span className="slide-in-container">
+                  <span className="pix-sliding-item" style={{ transitionDelay: '0ms' }}>
+                    Events
+                  </span>
+                </span>
+              </h1>
+            </div>
+          </div>
+          <p>Fostering a vibrant ecosystem of knowledge sharing, collaborations, and entrepreneurship initiatives.</p>
+        </div>
+      </header>
+
+      <main className="events-content container">
+        <div className="events-grid">
+          {events.map((event, index) => (
+            <a 
+              key={index} 
+              href={event.url} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="event-card-link-wrapper"
+            >
+              <div className="event-item-card">
+                <div className="event-item-image-wrap">
+                  <img src={event.image} alt={event.title} className="event-item-img" />
+                </div>
+                <div className="event-item-content">
+                  <h3 className="event-item-title">{event.title}</h3>
+                  <div className="event-item-footer">
+                    <span className="read-more-link">Read Story &rarr;</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </main>
+    </div>
+  );
+}
+
 function NotFoundPage() {
   return (
     <main className="not-found-page">
@@ -2997,7 +3820,7 @@ function NotFoundPage() {
 function TeamPage() {
   return (
     <>
-      <header className="page-header">
+      <header className="page-header team-page-header">
         <div className="container">
           <h1>{siteData.teamPage.title}</h1>
           <p>{siteData.teamPage.subtitle}</p>
